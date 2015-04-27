@@ -50,21 +50,52 @@ class AKPrayerTime {
     }
     
     enum TimeNames : String {
-        case Fajr = "Fajr"
+        case Fajr    = "Fajr"
         case Sunrise = "Sunrise"
-        case Dhuhr = "Dhuhr"
-        case Asr = "Asr"
-        case Sunset = "Sunset"
+        case Dhuhr   = "Dhuhr"
+        case Asr     = "Asr"
+        case Sunset  = "Sunset"
         case Maghrib = "Maghrib"
-        case Isha = "Isha"
+        case Isha    = "Isha"
+        
+        var index:Int {
+            get {
+                switch(self) {
+                case .Fajr    : return 0;
+                case .Sunrise : return 1;
+                case .Dhuhr   : return 2;
+                case .Asr     : return 3;
+                case .Sunset  : return 4;
+                case .Maghrib : return 5;
+                case .Isha    : return 6;
+                }
+            }
+        }
     }
     
-    //--------------------- Technical Settings --------------------
-    // number of iterations needed to compute times
+    struct Coordinate {
+        var latitude:Double
+        var longitude:Double
+        
+        init(lat:Double, lng:Double){
+            latitude = lat
+            longitude = lng
+        }
+    }
+    
+    //------------------------------------------------------
+    // MARK: Technical Settings
+    //------------------------------------------------------
+    
+    /// number of iterations needed to compute times
     var numIterations:Int = 1
     
-    //------------------- Calc Method Parameters --------------------
-    /*  self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
+    //------------------------------------------------------
+    // MARK: Calc Method Parameters
+    //------------------------------------------------------
+    
+    /**
+    self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
     
     fa : fajr angle
     ms : maghrib selector (0 = angle; 1 = minutes after sunset)
@@ -93,6 +124,8 @@ class AKPrayerTime {
         .Isha    : 0
     ];
     
+    static let GregorianCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+    
     // Once 'computePrayerTimes' is called,
     // computed values are stored here for reuse
     var currentPrayerTimes:[TimeNames: Double]?
@@ -105,20 +138,41 @@ class AKPrayerTime {
     // Not sure if it should be replaced by offsets[.Dhuhr]
     var dhuhrMinutes:Float = 0
     
-    var latitude:Double  = 0
-    var longitude:Double = 0
-    var timeZone:Float   = 0
-    
-    private var calcYear:Int?
-    private var calcMonth:Int?
-    private var calcDay:Int?
-    private var jDate:Double?
-    
-    init(){
-        // Nothing for now
+    var coordinate:Coordinate! {
+        didSet {
+            calculateJulianDate()
+        }
     }
     
-    func systemTimeZone()->Float {
+    var timeZone:Float   = AKPrayerTime.systemTimeZone()
+    
+//    private var calcYear:Int?
+//    private var calcMonth:Int?
+//    private var calcDay:Int?
+    
+    var calcDate:NSDate! {
+        didSet {
+            calculateJulianDate()
+        }
+    }
+    
+    private lazy var jDate:Double = AKPrayerTime.julianDateFromDate(NSDate())
+    
+    init(lat:Double, lng:Double){
+        coordinate = Coordinate(lat: lat, lng: lng)
+        calcDate = NSDate()
+    }
+    
+    private func calculateJulianDate() {
+        if let date = calcDate {
+            if let latlng = coordinate {
+                jDate = AKPrayerTime.julianDateFromDate(date)
+                jDate = jDate - (latlng.longitude / (15.0 * 24.0))
+            }
+        }
+    }
+    
+    class func systemTimeZone()->Float {
         let timeZone = NSTimeZone.localTimeZone()
         return Float(timeZone.secondsFromGMT)/3600.0
     }
@@ -128,7 +182,12 @@ class AKPrayerTime {
         return Double(timeZone.daylightSavingTimeOffsetForDate(NSDate()))
     }
     
-    private func julianDate(year:Int, month:Int, day:Int)->Double {
+    class func julianDateFromDate(date:NSDate)->Double {
+        var components = GregorianCalendar.components(NSCalendarUnit.CalendarUnitYear|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitDay, fromDate: NSDate())
+        return julianDate(year: components.year, month: components.month, day: components.day)
+    }
+    
+    class func julianDate(#year:Int, month:Int, day:Int)->Double {
         var yyear = year, mmonth = month, dday = day
         if mmonth < 2 {
             yyear -= 1
@@ -147,14 +206,11 @@ class AKPrayerTime {
     // MARK: - Calculation Functions
     //------------------------------------------------------
     
-    
     // References:
-    // http://www.ummah.net/astronomy/saltime
-    // http://aa.usno.navy.mil/faq/docs/SunApprox.html
-    
+    // http://praytimes.org/calculation/
     
     // compute declination angle of sun and equation of time
-    func sunPosition(jd:Double)->(Double, Double) {
+    private func sunPosition(jd:Double)->(Double, Double) {
         var D = jd - 2451545.0;
         var g = DMath.fixAngle(357.529 + 0.98560028 * D)
         var q = DMath.fixAngle(280.459 + 0.98564736 * D)
@@ -172,28 +228,28 @@ class AKPrayerTime {
     }
     
     // compute equation of time
-    func equationOfTime(jd:Double)->Double {
+    private func equationOfTime(jd:Double)->Double {
         let (_, EqT) = sunPosition(jd)
         return EqT
     }
     
     // compute declination angle of sun
-    func sunDeclination(jd:Double)->Double {
+    private func sunDeclination(jd:Double)->Double {
         let (d, _) = sunPosition(jd)
         return d
     }
     
     // compute mid-day (Dhuhr, Zawal) time
-    func computeMidDay(t:Double)->Double {
-        let T = equationOfTime(jDate! + t)
+    private func computeMidDay(t:Double)->Double {
+        let T = equationOfTime(jDate + t)
         return fixHour(12 - T)
     }
     
     // compute time for a given angle G
-    func computeTime(G:Double, t:Double)->Double {
-        let D:Double = sunDeclination(jDate! + t)
+    private func computeTime(G:Double, t:Double)->Double {
+        let D:Double = sunDeclination(jDate + t)
         let Z:Double = computeMidDay(t)
-        let V:Double = DMath.dArcCos((-DMath.dSin(G) - (DMath.dSin(D) * DMath.dSin(latitude))) / (DMath.dCos(D) * DMath.dCos(latitude))) / 15.0
+        let V:Double = DMath.dArcCos((-DMath.dSin(G) - (DMath.dSin(D) * DMath.dSin(coordinate!.latitude))) / (DMath.dCos(D) * DMath.dCos(coordinate!.latitude))) / 15.0
         
         if G > 90 {
             return Z - V
@@ -204,9 +260,9 @@ class AKPrayerTime {
     
     // compute the time of Asr
     // Shafii: step=1, Hanafi: step=2
-    func computeAsr(step:Double, t:Double)->Double {
-        let d = sunDeclination(jDate! + t)
-        let g = -DMath.dArcCot(step + DMath.dTan(abs(self.latitude - d)))
+    private func computeAsr(step:Double, t:Double)->Double {
+        let d = sunDeclination(jDate + t)
+        let g = -DMath.dArcCot(step + DMath.dTan(abs(coordinate!.latitude - d)))
         return computeTime(g, t: t)
     }
     
@@ -215,7 +271,7 @@ class AKPrayerTime {
     //------------------------------------------------------
     
     // compute the difference between two times
-    func timeDiff(time1:Double, time2:Double)->Double {
+    private func timeDiff(time1:Double, time2:Double)->Double {
         return fixHour(time2 - time1)
     }
     
@@ -226,31 +282,42 @@ class AKPrayerTime {
     // return prayer times for a given date
     //    -(NSMutableArray*)
     func getDatePrayerTimes(#year:Int, month:Int, day:Int, latitude:Double, longitude:Double, tZone:Float)->[TimeNames: AnyObject] {
-        self.latitude  = latitude
-        self.longitude = longitude
+        coordinate = Coordinate(lat: latitude, lng: longitude)
         
-        calcYear  = year
-        calcMonth = month
-        calcDay   = day
+//        calcYear  = year
+//        calcMonth = month
+//        calcDay   = day
+        var comp = NSDateComponents()
+        comp.year = year
+        comp.month = month
+        comp.day = day
+        calcDate = AKPrayerTime.GregorianCalendar.dateFromComponents(comp)
         
         //timeZone = this.effectiveTimeZone(year, month, day, timeZone);
         //timeZone = [self getTimeZone];
         timeZone = tZone
-        jDate = julianDate(year, month: month, day: day)
+        jDate = AKPrayerTime.julianDate(year: year, month: month, day: day)
         
         let lonDiff = longitude / (15.0 * 24.0)
-        jDate = jDate! - lonDiff;
+        jDate = jDate - lonDiff;
         return computeDayTimes()
     }
     
-    // return prayer times for a given date
-    //    func getPrayerTimes: (NSDateComponents*)date andLatitude:(double)latitude andLongitude:(double)longitude andtimeZone:(double)tZone {
-    //
-    //    int year  = (int)[date year];
-    //    int month = (int)[date month];
-    //    int day   = (int)[date day];
-    //    return [self getDatePrayerTimes:year andMonth:month andDay:day andLatitude:latitude andLongitude:longitude andtimeZone:tZone];
-    //    }
+    //return prayer times for a date(or today) when everything is set
+    func getPrayerTimes()->[TimeNames: AnyObject]? {
+        // If coordinate is not set, cannot obtain prayer times
+        if coordinate == nil {
+            return nil
+        }
+        
+        // If date is not set, set today as calcDate
+        if calcDate == nil {
+            calcDate = NSDate()
+        }
+        
+        // jDate should be autometically set already
+        return computeDayTimes()
+    }
     
     // set custom values for calculation parameters
     func setCustomParams(params:[Float]) {
@@ -331,14 +398,13 @@ class AKPrayerTime {
     
     func floatToNSDate(time:Double)->NSDate? {
         if let (hours, minutes) = floatToHourMinute(time) {
-            var components = NSDateComponents()
-            components.year = calcYear!
-            components.month = calcMonth!
-            components.day = calcDay!
+            var components = AKPrayerTime.GregorianCalendar.components(NSCalendarUnit.CalendarUnitYear|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitDay, fromDate: calcDate)
+//            components.year = calcYear!
+//            components.month = calcMonth!
+//            components.day = calcDay!
             components.hour = hours
             components.minute = minutes
-            var calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
-            return calendar?.dateFromComponents(components)
+            return AKPrayerTime.GregorianCalendar.dateFromComponents(components)
         } else {
             return nil
         }
@@ -379,7 +445,7 @@ class AKPrayerTime {
     }
     
     // compute prayer times at given julian date
-    func computeDayTimes()->[TimeNames: AnyObject] {
+    private func computeDayTimes()->[TimeNames: AnyObject] {
         //        static NSArray *defaultTimes;
         //        if(!defaultTimes) defaultTimes = @[@5.0, @6.0, @12.0, @13.0, @18.0, @18.0, @18.0];
         // This should be  class/static constant
@@ -457,7 +523,7 @@ class AKPrayerTime {
         var dTime2:Double
         
         for (timeName, time) in ttimes {
-            ttimes[timeName] = time + (Double(timeZone) - longitude / 15.0);
+            ttimes[timeName] = time + (Double(timeZone) - coordinate!.longitude / 15.0);
         }
         
         ttimes[TimeNames.Dhuhr] = ttimes[TimeNames.Dhuhr]! + (Double(dhuhrMinutes) / 60.0); //Dhuhr
