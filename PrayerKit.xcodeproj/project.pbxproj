@@ -14,6 +14,7 @@
 		3B6963551ADD8C0B00D036E8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B6963541ADD8C0B00D036E8 /* Images.xcassets */; };
 		3B6963581ADD8C0B00D036E8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B6963561ADD8C0B00D036E8 /* LaunchScreen.xib */; };
 		3B6963641ADD8C0B00D036E8 /* PrayerKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6963631ADD8C0B00D036E8 /* PrayerKitTests.swift */; };
+		3B69636F1ADD8DAF00D036E8 /* AKPrayerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		3B69635D1ADD8C0B00D036E8 /* PrayerKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrayerKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B6963621ADD8C0B00D036E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B6963631ADD8C0B00D036E8 /* PrayerKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerKitTests.swift; sourceTree = "<group>"; };
+		3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AKPrayerTime.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		3B6963481ADD8C0B00D036E8 /* PrayerKit */ = {
 			isa = PBXGroup;
 			children = (
+				3B69636D1ADD8C2300D036E8 /* AKPrayerTime */,
 				3B69634B1ADD8C0B00D036E8 /* AppDelegate.swift */,
 				3B69634D1ADD8C0B00D036E8 /* MasterViewController.swift */,
 				3B69634F1ADD8C0B00D036E8 /* DetailViewController.swift */,
@@ -113,6 +116,14 @@
 				3B6963621ADD8C0B00D036E8 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3B69636D1ADD8C2300D036E8 /* AKPrayerTime */ = {
+			isa = PBXGroup;
+			children = (
+				3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */,
+			);
+			path = AKPrayerTime;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +229,7 @@
 				3B6963501ADD8C0B00D036E8 /* DetailViewController.swift in Sources */,
 				3B69634E1ADD8C0B00D036E8 /* MasterViewController.swift in Sources */,
 				3B69634C1ADD8C0B00D036E8 /* AppDelegate.swift in Sources */,
+				3B69636F1ADD8DAF00D036E8 /* AKPrayerTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
