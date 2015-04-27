@@ -39,7 +39,7 @@ class MasterViewController: UITableViewController {
         prayerKit.asrJuristic = .Hanafi
         var times = prayerKit.getDatePrayerTimes(year: 2015, month: 4, day: 27, latitude: 23.70, longitude: 90.37, tZone: 6)
         for (pName, time) in times {
-            println(pName.stringValue() + " : \(time)")
+            println(pName.rawValue  + " : \(time)")
         }
     }
 

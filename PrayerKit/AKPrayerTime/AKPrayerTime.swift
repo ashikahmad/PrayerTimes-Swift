@@ -49,26 +49,14 @@ class AKPrayerTime {
         case Date
     }
     
-    enum TimeNames {
-        case Fajr
-        case Sunrise
-        case Dhuhr
-        case Asr
-        case Sunset
-        case Maghrib
-        case Isha
-        
-        func stringValue() -> String {
-            switch self {
-            case .Fajr    : return "Fajr"
-            case .Sunrise : return "Sunrise"
-            case .Dhuhr   : return "Dhuhr"
-            case .Asr     : return "Asr"
-            case .Sunset  : return "Sunset"
-            case .Maghrib : return "Maghrib"
-            case .Isha    : return "Isha"
-            }
-        }
+    enum TimeNames : String {
+        case Fajr = "Fajr"
+        case Sunrise = "Sunrise"
+        case Dhuhr = "Dhuhr"
+        case Asr = "Asr"
+        case Sunset = "Sunset"
+        case Maghrib = "Maghrib"
+        case Isha = "Isha"
     }
     
     //--------------------- Technical Settings --------------------
