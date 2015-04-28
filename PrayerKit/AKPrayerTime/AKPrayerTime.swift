@@ -49,26 +49,24 @@ class AKPrayerTime {
         case Date
     }
     
-    enum TimeNames : String {
-        case Fajr    = "Fajr"
-        case Sunrise = "Sunrise"
-        case Dhuhr   = "Dhuhr"
-        case Asr     = "Asr"
-        case Sunset  = "Sunset"
-        case Maghrib = "Maghrib"
-        case Isha    = "Isha"
+    enum TimeNames : Int {
+        case Fajr    = 0
+        case Sunrise = 1
+        case Dhuhr   = 2
+        case Asr     = 3
+        case Sunset  = 4
+        case Maghrib = 5
+        case Isha    = 6
         
-        var index:Int {
-            get {
-                switch(self) {
-                case .Fajr    : return 0;
-                case .Sunrise : return 1;
-                case .Dhuhr   : return 2;
-                case .Asr     : return 3;
-                case .Sunset  : return 4;
-                case .Maghrib : return 5;
-                case .Isha    : return 6;
-                }
+        func toString()->String {
+            switch(self) {
+            case .Fajr    : return "Fajr"
+            case .Sunrise : return "Sunrise"
+            case .Dhuhr   : return "Dhuhr"
+            case .Asr     : return "Asr"
+            case .Sunset  : return "Sunset"
+            case .Maghrib : return "Maghrib"
+            case .Isha    : return "Isha"
             }
         }
     }
@@ -83,16 +81,23 @@ class AKPrayerTime {
         }
     }
     
+    static let GregorianCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+    static let DefaultDayTimes:[TimeNames: Double] = [
+        TimeNames.Fajr    : 5.0,
+        TimeNames.Sunrise : 6.0,
+        TimeNames.Dhuhr   : 12.0,
+        TimeNames.Asr     : 13.0,
+        TimeNames.Sunset  : 18.0,
+        TimeNames.Maghrib : 18.0,
+        TimeNames.Isha    : 18.0
+    ]
+    
     //------------------------------------------------------
-    // MARK: Technical Settings
+    // MARK: - Technical Settings
     //------------------------------------------------------
     
     /// number of iterations needed to compute times
     var numIterations:Int = 1
-    
-    //------------------------------------------------------
-    // MARK: Calc Method Parameters
-    //------------------------------------------------------
     
     /**
     self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
@@ -114,6 +119,10 @@ class AKPrayerTime {
         .Custom  : [18  , 1, 0  , 0, 17  ]
     ];
     
+    //------------------------------------------------------
+    // MARK: - Properties
+    //------------------------------------------------------
+    
     var offsets:[TimeNames: Double] = [
         .Fajr    : 0,
         .Sunrise : 0,
@@ -124,7 +133,6 @@ class AKPrayerTime {
         .Isha    : 0
     ];
     
-    static let GregorianCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
     
     // Once 'computePrayerTimes' is called,
     // computed values are stored here for reuse
@@ -146,10 +154,6 @@ class AKPrayerTime {
     
     var timeZone:Float   = AKPrayerTime.systemTimeZone()
     
-//    private var calcYear:Int?
-//    private var calcMonth:Int?
-//    private var calcDay:Int?
-    
     var calcDate:NSDate! {
         didSet {
             calculateJulianDate()
@@ -158,10 +162,172 @@ class AKPrayerTime {
     
     private lazy var jDate:Double = AKPrayerTime.julianDateFromDate(NSDate())
     
+    //------------------------------------------------------
+    // MARK: - Constructor
+    //------------------------------------------------------
+    
     init(lat:Double, lng:Double){
         coordinate = Coordinate(lat: lat, lng: lng)
         calcDate = NSDate()
     }
+    
+    //------------------------------------------------------
+    // MARK: - Utility Methods (Type Methods)
+    //------------------------------------------------------
+    
+    class func systemTimeZone()->Float {
+        let timeZone = NSTimeZone.localTimeZone()
+        return Float(timeZone.secondsFromGMT)/3600.0
+    }
+    
+    class func dayLightSavingOffset()->Double {
+        let timeZone = NSTimeZone.localTimeZone()
+        return Double(timeZone.daylightSavingTimeOffsetForDate(NSDate()))
+    }
+    
+    //------------------------------------------------------
+    // MARK: - Public Methods: Get prayer times
+    //------------------------------------------------------
+    
+    // return prayer times for a given date
+    func getDatePrayerTimes(#year:Int, month:Int, day:Int, latitude:Double, longitude:Double, tZone:Float)->[TimeNames: AnyObject] {
+        coordinate = Coordinate(lat: latitude, lng: longitude)
+        
+        //        calcYear  = year
+        //        calcMonth = month
+        //        calcDay   = day
+        var comp = NSDateComponents()
+        comp.year = year
+        comp.month = month
+        comp.day = day
+        calcDate = AKPrayerTime.GregorianCalendar.dateFromComponents(comp)
+        
+        //timeZone = this.effectiveTimeZone(year, month, day, timeZone);
+        //timeZone = [self getTimeZone];
+        timeZone = tZone
+        jDate = AKPrayerTime.julianDate(year: year, month: month, day: day)
+        
+        let lonDiff = longitude / (15.0 * 24.0)
+        jDate = jDate - lonDiff;
+        return computeDayTimes()
+    }
+    
+    //return prayer times for a date(or today) when everything is set
+    func getPrayerTimes()->[TimeNames: AnyObject]? {
+        // If coordinate is not set, cannot obtain prayer times
+        if coordinate == nil {
+            return nil
+        }
+        
+        // If date is not set, set today as calcDate
+        if calcDate == nil {
+            calcDate = NSDate()
+        }
+        
+        // jDate should be autometically set already
+        return computeDayTimes()
+    }
+    
+    //------------------------------------------------------
+    // MARK: - Public Methods: Configurations
+    //------------------------------------------------------
+    
+    // set custom values for calculation parameters
+    func setCustomParams(params:[Float]) {
+        var cust = methodParams[CalculationMethod.Custom]!
+        var curr = methodParams[calculationMethod]!
+        for (var i=0; i<5; i++)
+        {
+            var j:Float = params[i];
+            if j == -1 {
+                cust[i] = curr[i]
+            } else {
+                cust[i] = j
+            }
+        }
+        methodParams[CalculationMethod.Custom] = cust
+        calculationMethod = CalculationMethod.Custom
+    }
+    
+    // set the angle for calculating Fajr
+    func setFajrAngle(angle:Float) {
+        setCustomParams([angle, -1.0, -1.0, -1.0, -1.0])
+    }
+    
+    // set the angle for calculating Maghrib
+    func setMaghribAngle(angle:Float) {
+        setCustomParams([-1.0, 0.0, angle, -1.0, -1.0])
+    }
+    
+    // set the angle for calculating Isha
+    func setIshaAngle(angle:Float) {
+        setCustomParams([-1.0, -1.0, -1.0, 0.0, angle])
+    }
+    
+    // set the minutes after Sunset for calculating Maghrib
+    func setMaghribMinutes(minutes:Float) {
+        setCustomParams([-1.0, 1.0, minutes, -1.0, -1.0])
+    }
+    
+    // set the minutes after Maghrib for calculating Isha
+    func setIshaMinutes(minutes:Float) {
+        setCustomParams([-1.0, -1.0, -1.0, 1.0, minutes])
+    }
+    
+    //------------------------------------------------------
+    // MARK: - Public Methods: Format Conversion
+    //------------------------------------------------------
+    
+    // convert double hours to (hours, minutes)
+    func floatToHourMinute(time:Double)->(hours:Int, minutes:Int)? {
+        if time.isNaN {
+            return nil
+        }
+        
+        var ttime = fixHour(time + 0.5 / 60.0)  // add 0.5 minutes to round
+        var hours = Int(floor(time))
+        var minutes = Int(floor((ttime - Double(hours)) * 60.0))
+        
+        return (hours: hours, minutes: minutes)
+    }
+    
+    // convert double hours to 24h format
+    func floatToTime24(time:Double)->String {
+        if let (hours, minutes) = floatToHourMinute(time) {
+            return NSString(format: "%02d:%02d", hours, minutes) as String
+        } else {
+            return "---"
+        }
+    }
+    
+    // convert double hours to 12h format
+    func floatToTime12(time:Double, noSuffix:Bool)->String {
+        if let (hours, minutes) = floatToHourMinute(time) {
+            return NSString(format: "%02d:%02d%@", (hours % 12), minutes, (noSuffix ? "" : ((hours > 12) ? " pm" : " am")) ) as String
+        } else {
+            return "---"
+        }
+    }
+    
+    // convert double hours to 12h format with no suffix
+    func floatToTime12NS(time:Double)->String {
+        return floatToTime12(time, noSuffix: true)
+    }
+    
+    func floatToNSDate(time:Double)->NSDate? {
+        if let (hours, minutes) = floatToHourMinute(time) {
+            var components = AKPrayerTime.GregorianCalendar.components(NSCalendarUnit.CalendarUnitYear|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitDay, fromDate: calcDate)
+            components.hour = hours
+            components.minute = minutes
+            return AKPrayerTime.GregorianCalendar.dateFromComponents(components)
+        } else {
+            return nil
+        }
+    }
+    
+    //------------------------------------------------------
+    // MARK: - Julian Date Calculation
+    //------------------------------------------------------
     
     private func calculateJulianDate() {
         if let date = calcDate {
@@ -170,16 +336,6 @@ class AKPrayerTime {
                 jDate = jDate - (latlng.longitude / (15.0 * 24.0))
             }
         }
-    }
-    
-    class func systemTimeZone()->Float {
-        let timeZone = NSTimeZone.localTimeZone()
-        return Float(timeZone.secondsFromGMT)/3600.0
-    }
-    
-    func dayLightSavingOffset()->Double {
-        let timeZone = NSTimeZone.localTimeZone()
-        return Double(timeZone.daylightSavingTimeOffsetForDate(NSDate()))
     }
     
     class func julianDateFromDate(date:NSDate)->Double {
@@ -274,142 +430,7 @@ class AKPrayerTime {
     private func timeDiff(time1:Double, time2:Double)->Double {
         return fixHour(time2 - time1)
     }
-    
-    //------------------------------------------------------
-    // MARK: - Interface (Public) Functions
-    //------------------------------------------------------
-    
-    // return prayer times for a given date
-    //    -(NSMutableArray*)
-    func getDatePrayerTimes(#year:Int, month:Int, day:Int, latitude:Double, longitude:Double, tZone:Float)->[TimeNames: AnyObject] {
-        coordinate = Coordinate(lat: latitude, lng: longitude)
-        
-//        calcYear  = year
-//        calcMonth = month
-//        calcDay   = day
-        var comp = NSDateComponents()
-        comp.year = year
-        comp.month = month
-        comp.day = day
-        calcDate = AKPrayerTime.GregorianCalendar.dateFromComponents(comp)
-        
-        //timeZone = this.effectiveTimeZone(year, month, day, timeZone);
-        //timeZone = [self getTimeZone];
-        timeZone = tZone
-        jDate = AKPrayerTime.julianDate(year: year, month: month, day: day)
-        
-        let lonDiff = longitude / (15.0 * 24.0)
-        jDate = jDate - lonDiff;
-        return computeDayTimes()
-    }
-    
-    //return prayer times for a date(or today) when everything is set
-    func getPrayerTimes()->[TimeNames: AnyObject]? {
-        // If coordinate is not set, cannot obtain prayer times
-        if coordinate == nil {
-            return nil
-        }
-        
-        // If date is not set, set today as calcDate
-        if calcDate == nil {
-            calcDate = NSDate()
-        }
-        
-        // jDate should be autometically set already
-        return computeDayTimes()
-    }
-    
-    // set custom values for calculation parameters
-    func setCustomParams(params:[Float]) {
-        var cust = methodParams[CalculationMethod.Custom]!
-        var curr = methodParams[calculationMethod]!
-        for (var i=0; i<5; i++)
-        {
-            var j:Float = params[i];
-            if j == -1 {
-                cust[i] = curr[i]
-            } else {
-                cust[i] = j
-            }
-        }
-        methodParams[CalculationMethod.Custom] = cust
-        calculationMethod = CalculationMethod.Custom
-    }
-    
-    // set the angle for calculating Fajr
-    func setFajrAngle(angle:Float) {
-        setCustomParams([angle, -1.0, -1.0, -1.0, -1.0])
-    }
-    
-    // set the angle for calculating Maghrib
-    func setMaghribAngle(angle:Float) {
-        setCustomParams([-1.0, 0.0, angle, -1.0, -1.0])
-    }
-    
-    // set the angle for calculating Isha
-    func setIshaAngle(angle:Float) {
-        setCustomParams([-1.0, -1.0, -1.0, 0.0, angle])
-    }
-    
-    // set the minutes after Sunset for calculating Maghrib
-    func setMaghribMinutes(minutes:Float) {
-        setCustomParams([-1.0, 1.0, minutes, -1.0, -1.0])
-    }
-    
-    // set the minutes after Maghrib for calculating Isha
-    func setIshaMinutes(minutes:Float) {
-        setCustomParams([-1.0, -1.0, -1.0, 1.0, minutes])
-    }
-    
-    func floatToHourMinute(time:Double)->(hours:Int, minutes:Int)? {
-        //        if !(time is Double) {
-        //            return nil
-        //        }
-        
-        var ttime = fixHour(time + 0.5 / 60.0)  // add 0.5 minutes to round
-        var hours = Int(floor(time))
-        var minutes = Int(floor((ttime - Double(hours)) * 60.0))
-        
-        return (hours: hours, minutes: minutes)
-    }
-    
-    // convert double hours to 24h format
-    func floatToTime24(time:Double)->String {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            return NSString(format: "%02d:%02d", hours, minutes) as String
-        } else {
-            return "---"
-        }
-    }
-    
-    // convert double hours to 12h format
-    func floatToTime12(time:Double, noSuffix:Bool)->String {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            return NSString(format: "%02d:%02d%@", (hours % 12), minutes, (noSuffix ? "" : ((hours > 12) ? " pm" : " am")) ) as String
-        } else {
-            return "---"
-        }
-    }
-    
-    // convert double hours to 12h format with no suffix
-    func floatToTime12NS(time:Double)->String {
-        return floatToTime12(time, noSuffix: true)
-    }
-    
-    func floatToNSDate(time:Double)->NSDate? {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            var components = AKPrayerTime.GregorianCalendar.components(NSCalendarUnit.CalendarUnitYear|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitDay, fromDate: calcDate)
-//            components.year = calcYear!
-//            components.month = calcMonth!
-//            components.day = calcDay!
-            components.hour = hours
-            components.minute = minutes
-            return AKPrayerTime.GregorianCalendar.dateFromComponents(components)
-        } else {
-            return nil
-        }
-    }
-    
+
     //------------------------------------------------------
     // MARK: - Compute Prayer Times
     //------------------------------------------------------
@@ -446,23 +467,8 @@ class AKPrayerTime {
     
     // compute prayer times at given julian date
     private func computeDayTimes()->[TimeNames: AnyObject] {
-        //        static NSArray *defaultTimes;
-        //        if(!defaultTimes) defaultTimes = @[@5.0, @6.0, @12.0, @13.0, @18.0, @18.0, @18.0];
-        // This should be  class/static constant
-        let defaultTimes:[TimeNames: Double] = [
-            TimeNames.Fajr    : 5.0,
-            TimeNames.Sunrise : 6.0,
-            TimeNames.Dhuhr   : 12.0,
-            TimeNames.Asr     : 13.0,
-            TimeNames.Sunset  : 18.0,
-            TimeNames.Maghrib : 18.0,
-            TimeNames.Isha    : 18.0
-        ]
-        
-        //int i = 0;
-        //        NSMutableArray *t1, *t2, *t3;
         //default times
-        var times = defaultTimes;
+        var times = AKPrayerTime.DefaultDayTimes;
         
         // Compute minimum once
         var t1 = computeTimes(times)
@@ -509,10 +515,6 @@ class AKPrayerTime {
     // range reduce hours to 0..23
     func fixHour(a:Double)->Double {
         return DMath.wrap(a, min: 0, max: 24)
-        //        var aa = a
-        //        aa = aa - 24.0 * floor(aa / 24.0)
-        //        aa = aa < 0 ? (aa + 24) : aa
-        //        return a
     }
     
     // adjust times in a prayer time array
@@ -597,7 +599,6 @@ class AKPrayerTime {
         
         return ttimes;
     }
-    
     
     // the night portion used for adjusting times in higher latitudes
     func nightPortion(angle:Double)->Double {
