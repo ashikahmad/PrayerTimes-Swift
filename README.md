@@ -20,19 +20,22 @@ Just import `AKPrayerTime.swift` in your project, and:
 ``` swift
 // Create PrayerKit instance with your latitude/longitude
 var prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
-// Optionally, set your preferred calculation method. Default is Muslim World Legue (MWL) method
+// Optionally, set your preferred calculation method.
+// Default is Muslim World Legue (MWL) method
 prayerKit.calculationMethod = .Karachi
-// Optionally, set your preferred Asr method. Default is Safi'i
+// Optionally, set your preferred Asr method.
+// Default is Safi'i
 prayerKit.asrJuristic = .Hanafi
-// Optionally, set your output format. You can obviously format it later also
+// Optionally, set your output format.
+// You can obviously format it later also
 prayerKit.outputFormat = .Time12
 // ... and finally, get your times
 var times = prayerKit.getPrayerTimes()
 
 // Then, you can use it as
-times[.Fajr] // 04:07 am
+times[.Fajr]    // 04:07 am
 times[.Sunrise] // 05:27 am
 // ...and follow included example and public methods in source for more possibilities!
 ```
 
-More details will be added soon.
+More details will be added soon. Contribution in both **source** and **documentation** is most welcome!
