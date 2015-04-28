@@ -81,8 +81,8 @@ class AKPrayerTime {
         }
     }
     
-    static let GregorianCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-    static let DefaultDayTimes:[TimeNames: Double] = [
+    private static let GregorianCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+    private static let DefaultDayTimes:[TimeNames: Double] = [
         TimeNames.Fajr    : 5.0,
         TimeNames.Sunrise : 6.0,
         TimeNames.Dhuhr   : 12.0,
@@ -100,13 +100,15 @@ class AKPrayerTime {
     var numIterations:Int = 1
     
     /**
-    self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
+    `self.methodParams[methodNum] = @[fa, ms, mv, is, iv];`
     
+    **Note:**
     fa : fajr angle
     ms : maghrib selector (0 = angle; 1 = minutes after sunset)
     mv : maghrib parameter value (in angle or minutes)
     is : isha selector (0 = angle; 1 = minutes after maghrib)
     iv : isha parameter value (in angle or minutes)
+    `
     */
     var methodParams:[CalculationMethod: [Float]] = [
         .MWL     : [18  , 1, 0  , 0, 17  ],
