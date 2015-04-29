@@ -40,9 +40,9 @@ times[.Sunrise] // 05:27 am
 
 # Basic configurations
 
-Property | Options
+Property | Options 
 --- | ---
-calculationMethod | **.MWL** Muslim World League  <br/>**.ISNA** Islamic Society of North America <br/>**.Egypt** Egyptian General Authority of Survey <br/>**.Makkah** Umm al-Qura University, Makkah <br/>**.Karachi** University of Islamic Science, Karachi <br/>**.Tehran** Institute of Geophysics, University of Tehran <br/>**.Jafari** Shia Ithna Ashari, Leva Research Institute, Qum <br/>**.Custom** Autometically set when parameters are changed manually
-asrJuristic | **.Shafii** As followed by Shafi'i, Maliki, Ja'fari, and Hanbali school <br/>**.Hanafi** As followed by Hanafi school
+calculationMethod | **.MWL** ➠ Muslim World League  <br/>**.ISNA** ➠ Islamic Society of North America <br/>**.Egypt** ➠ Egyptian General Authority of Survey <br/>**.Makkah** ➠ Umm al-Qura University, Makkah <br/>**.Karachi** ➠ University of Islamic Science, Karachi <br/>**.Tehran** ➠ Institute of Geophysics, University of Tehran <br/>**.Jafari** ➠ Shia Ithna Ashari, Leva Research Institute, Qum <br/>**.Custom** ➠ Autometically set when parameters are changed manually
+asrJuristic | **.Shafii** ➠ As followed by Shafi'i, Maliki, Ja'fari, and Hanbali school <br/>**.Hanafi** ➠ As followed by Hanafi school
 
 More details will be added soon. Contribution in both **source** and **documentation** is most welcome!
