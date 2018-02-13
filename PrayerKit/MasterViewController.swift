@@ -12,11 +12,11 @@ class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
 //    var objects = NSMutableArray()
-    var todayTimes:[(AKPrayerTime.TimeNames, AnyObject)] = []
+    var todayTimes:[(AKPrayerTime.TimeNames, Any)] = []
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             self.clearsSelectionOnViewWillAppear = false
             self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
         }
@@ -25,27 +25,27 @@ class MasterViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
-        self.navigationItem.rightBarButtonItem = addButton
-        if let split = self.splitViewController {
-            let controllers = split.viewControllers
-            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
-        }
-        
-        var prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
+//        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject))
+//        self.navigationItem.rightBarButtonItem = addButton
+//        if let split = self.splitViewController {
+//            let controllers = split.viewControllers
+//            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
+//        }
+
+        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
         prayerKit.calculationMethod = .Karachi
         prayerKit.asrJuristic = .Hanafi
         prayerKit.outputFormat = .Time12
-        var times = prayerKit.getPrayerTimes()
+        let times = prayerKit.getPrayerTimes()
         if let t = times {
-            let sortedTimes = sorted(times!){a,b in a.0.rawValue < b.0.rawValue}
+            let sortedTimes = t.sorted {a,b in a.0.rawValue < b.0.rawValue}
             todayTimes = sortedTimes
             tableView.reloadData()
             for (pName, time) in sortedTimes {
-                let paddedName:String = (pName.toString() as NSString).stringByPaddingToLength(15, withString: " ", startingAtIndex: 0)
-                println(paddedName  + " : \(time)")
+                let paddedName:String = (pName.toString() as NSString).padding(toLength: 15, withPad: " ", startingAt: 0)
+                print(paddedName  + " : \(time)")
             }
         }
     }
@@ -77,24 +77,24 @@ class MasterViewController: UITableViewController {
 
     // MARK: - Table View
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todayTimes.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! UITableViewCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        let (timeName, time: AnyObject) = todayTimes[indexPath.row]
+        let (timeName, time) = todayTimes[indexPath.row]
         cell.textLabel!.text = timeName.toString()
         cell.detailTextLabel!.text = time as? String
         return cell
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }

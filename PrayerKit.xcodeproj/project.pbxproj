@@ -175,6 +175,7 @@
 				TargetAttributes = {
 					3B6963451ADD8C0A00D036E8 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 5DV6KZN6C5;
 					};
 					3B69635C1ADD8C0B00D036E8 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -354,9 +355,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5DV6KZN6C5;
 				INFOPLIST_FILE = PrayerKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -364,9 +367,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5DV6KZN6C5;
 				INFOPLIST_FILE = PrayerKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -385,6 +390,7 @@
 				INFOPLIST_FILE = PrayerKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrayerKit.app/PrayerKit";
 			};
 			name = Debug;
@@ -400,6 +406,7 @@
 				INFOPLIST_FILE = PrayerKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrayerKit.app/PrayerKit";
 			};
 			name = Release;
@@ -423,6 +430,7 @@
 				3B6963691ADD8C0B00D036E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3B69636A1ADD8C0B00D036E8 /* Build configuration list for PBXNativeTarget "PrayerKitTests" */ = {
 			isa = XCConfigurationList;
@@ -431,6 +439,7 @@
 				3B69636C1ADD8C0B00D036E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
