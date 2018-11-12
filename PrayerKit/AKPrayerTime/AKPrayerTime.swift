@@ -68,6 +68,7 @@ class AKPrayerTime {
         case maghrib
         case isha
         case midnight
+        case qiyam
         
         func toString()->String {
             return self.rawValue.capitalized
@@ -183,7 +184,8 @@ class AKPrayerTime {
         .sunset  : 0,
         .maghrib : 0,
         .isha    : 0,
-        .midnight: 0
+        .midnight: 0,
+        .qiyam   : 0
     ];
     
     
@@ -262,7 +264,7 @@ class AKPrayerTime {
     //------------------------------------------------------
     
     /// Return prayer times for a given date, latitude, longitude and timeZone
-    func getDatePrayerTimes(year:Int, month:Int, day:Int, latitude:Double, longitude:Double, tZone:Float)->[TimeNames: Any] {
+    func getDatePrayerTimes(year: Int, month: Int, day: Int, latitude: Double, longitude: Double, tZone: Float)-> [TimeNames: Any] {
         coordinate = Coordinate(lat: latitude, lng: longitude)
         
         var comp = DateComponents()
@@ -298,7 +300,9 @@ class AKPrayerTime {
     }
 
     func sorted(_ t: [TimeNames: Any]) -> [(TimeNames, Any)] {
-        let seq: [AKPrayerTime.TimeNames] = [.imsak, .fajr, .sunrise, .dhuhr, .asr, .sunset, .maghrib, .isha, .midnight]
+        let seq: [AKPrayerTime.TimeNames] = [.imsak, .fajr, .sunrise,
+                                             .dhuhr, .asr, .sunset,
+                                             .maghrib, .isha, .midnight, .qiyam]
         return t.sorted {a,b in
             (seq.firstIndex(of: a.key) ?? 0) < (seq.firstIndex(of: b.key) ?? 0)
         }
@@ -342,13 +346,17 @@ class AKPrayerTime {
     func setIshaMinutes(minutes: Double) {
         setCustomParams { $0.isha = .minutes(minutes) }
     }
+
+    func setMidnightMethod(_ method: MidnightMethod) {
+        setCustomParams { $0.midnight = method }
+    }
     
     //------------------------------------------------------
     // MARK: - Public Methods: Format Conversion
     //------------------------------------------------------
     
     /// Convert float hours to (hours, minutes)
-    func floatToHourMinute(_ time:Double)->(hours:Int, minutes:Int)? {
+    func floatToHourMinute(_ time: Double)-> (hours: Int, minutes: Int)? {
         if time.isNaN {
             return nil
         }
@@ -554,13 +562,17 @@ class AKPrayerTime {
         }
         
         var t2 = adjustTimes(t1)
-        
+
+        let nightTime: Double
         switch Defaults.methodParams[calculationMethod]!.midnight {
         case .standard:
-            t2[.midnight] = t2[.sunset]! + timeDiff(t2[.sunset]!, time2: t2[.sunrise]!) / 2
+            nightTime = timeDiff(t2[.sunset]!, time2: t2[.sunrise]!)
         case .jafari:
-            t2[.midnight] = t2[.sunset]! + timeDiff(t2[.sunset]!, time2: t2[.fajr]!) / 2
+            nightTime = timeDiff(t2[.sunset]!, time2: t2[.fajr]!)
         }
+
+        t2[.midnight] = t2[.sunset]! + nightTime/2
+        t2[.qiyam] = t2[.sunset]! + nightTime*2/3
         
         t2 = tuneTimes(t2)
         
@@ -652,13 +664,44 @@ class AKPrayerTime {
     
     // adjust Fajr, Isha and Maghrib for locations in higher latitudes
     private func adjustHighLatTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
+
+        guard let params = Defaults.methodParams[calculationMethod],
+            let sunrise = times[TimeNames.sunrise],
+            let sunset = times[TimeNames.sunset]
+            else { return times }
+
         var ttimes = times
-        let params = Defaults.methodParams[calculationMethod]!
-        
-        let nightTime = timeDiff(ttimes[TimeNames.sunset]!, time2:ttimes[TimeNames.sunrise]!) // sunset to sunrise
-        
+
+        // sunset to sunrise
+        let nightTime = timeDiff(sunset, time2: sunrise)
+
+        if let imsak = ttimes[.imsak], case let .angles(angle) = imsakSettings {
+            ttimes[.imsak] = adjustHLTime(time: imsak, base: sunrise,
+                                          angle: angle, night: nightTime, ccw: true)
+        }
+
+        if let fajr = ttimes[.fajr] {
+            ttimes[.fajr] = adjustHLTime(time: fajr, base: sunrise,
+                                     angle: params.fajrAngle, night: nightTime, ccw: true)
+        }
+
+        if let maghrib = ttimes[.maghrib], case let .angles(angle) = params.maghrib {
+            ttimes[.maghrib] = adjustHLTime(time: maghrib, base: sunset,
+                                            angle: angle, night: nightTime, ccw: false)
+        }
+
+        if let isha = ttimes[.isha], case let .angles(angle) = params.isha {
+            ttimes[.isha] = adjustHLTime(time: isha, base: sunset,
+                                            angle: angle, night: nightTime, ccw: false)
+        }
+
+        /*
+
         // Adjust Fajr
-        let fajrDiff = nightPortion(angle: params.fajrAngle) * nightTime;
+        let fajrDiff = nightPortion(angle: params.fajrAngle, night: nightTime)
+//        if let fajr = ttimes[TimeNames.fajr],
+//            !fajr.isNaN,
+
         if (ttimes[TimeNames.fajr]!.isNaN || timeDiff(ttimes[TimeNames.fajr]!, time2: ttimes[TimeNames.sunrise]!) > fajrDiff) {
             ttimes[TimeNames.fajr] = ttimes[TimeNames.sunrise]! - fajrDiff
         }
@@ -670,7 +713,7 @@ class AKPrayerTime {
             default: return 18.0
             }
         }()
-        let ishaDiff:Double = nightPortion(angle: ishaAngle) * nightTime
+        let ishaDiff:Double = nightPortion(angle: ishaAngle, night: nightTime)
         if (ttimes[TimeNames.isha]!.isNaN || timeDiff(ttimes[TimeNames.sunset]!, time2: ttimes[TimeNames.isha]!) > ishaDiff) {
             ttimes[TimeNames.isha] = ttimes[TimeNames.sunset]! + ishaDiff
         }
@@ -683,17 +726,27 @@ class AKPrayerTime {
             }
         }()
         
-        let maghribDiff:Double = nightPortion(angle: maghribAngle) * nightTime
+        let maghribDiff:Double = nightPortion(angle: maghribAngle, night: nightTime)
         if let maghrib = ttimes[.maghrib],
             timeDiff(ttimes[.sunset]!, time2: maghrib) > maghribDiff {
             ttimes[.maghrib] = ttimes[.sunset]! + maghribDiff
         }
-        
+        */
         return ttimes;
+    }
+
+    private func adjustHLTime(time: Double, base: Double, angle: Double, night: Double, ccw: Bool) -> Double {
+        var newTime = time
+        let portion = nightPortion(angle: angle, night: night)
+        let diff = ccw ? timeDiff(time, time2: base) : timeDiff(base, time2: time)
+        if diff.isNaN || diff > portion {
+            newTime = base + (ccw ? -portion : portion)
+        }
+        return newTime
     }
     
     // the night portion used for adjusting times in higher latitudes
-    private func nightPortion(angle: Double)-> Double {
+    private func nightPortion(angle: Double, night: Double)-> Double {
         var calc:Double
         
         switch highLatitudeAdjustment {
@@ -703,7 +756,7 @@ class AKPrayerTime {
         case .oneSeventh : calc = 0.14286
         }
         
-        return calc;
+        return calc * night;
     }
     
     // convert hours to day portions

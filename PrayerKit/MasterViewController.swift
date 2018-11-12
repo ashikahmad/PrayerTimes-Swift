@@ -34,11 +34,13 @@ class MasterViewController: UITableViewController {
 //            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
 //        }
 
-        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 43.6605, lng: -79.4633)
-        // (lat: 23.810332, lng: 90.4125181)
-        prayerKit.calculationMethod = .isna
-        prayerKit.asrJuristic = .shafii
+        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
+        // (lat: 43.6605, lng: -79.4633)
+        prayerKit.calculationMethod = .karachi
+        prayerKit.asrJuristic = .hanafi
         prayerKit.outputFormat = .time12
+//        prayerKit.timeZone = -5.0
+        prayerKit.setMidnightMethod(.jafari)
         let times = prayerKit.getPrayerTimes()
         if let t = times {
             todayTimes = prayerKit.sorted(t)
