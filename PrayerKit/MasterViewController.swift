@@ -34,16 +34,17 @@ class MasterViewController: UITableViewController {
 //            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
 //        }
 
-        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
-        prayerKit.calculationMethod = .Karachi
-        prayerKit.asrJuristic = .Hanafi
-        prayerKit.outputFormat = .Time12
+        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 43.6605,
+                                                  lng: -79.4633)
+        //(lat: 23.810332, lng: 90.4125181)
+        prayerKit.calculationMethod = .ISNA
+        prayerKit.asrJuristic = .Shafii
+        prayerKit.outputFormat = .time12
         let times = prayerKit.getPrayerTimes()
         if let t = times {
-            let sortedTimes = t.sorted {a,b in a.0.rawValue < b.0.rawValue}
-            todayTimes = sortedTimes
+            todayTimes = prayerKit.sorted(t)
             tableView.reloadData()
-            for (pName, time) in sortedTimes {
+            for (pName, time) in todayTimes {
                 let paddedName:String = (pName.toString() as NSString).padding(toLength: 15, withPad: " ", startingAt: 0)
                 print(paddedName  + " : \(time)")
             }
