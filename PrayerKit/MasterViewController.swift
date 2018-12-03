@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AKPrayerTime
 
 class MasterViewController: UITableViewController {
 
