@@ -13,7 +13,7 @@ class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
 //    var objects = NSMutableArray()
-    var todayTimes:[(AKPrayerTime.TimeNames, Any)] = []
+    var todayTimes:[(AKPrayerTime.TimeNames, AKPrayerTime.Time)] = []
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -48,7 +48,7 @@ class MasterViewController: UITableViewController {
             tableView.reloadData()
             for (pName, time) in todayTimes {
                 let paddedName:String = (pName.toString() as NSString).padding(toLength: 15, withPad: " ", startingAt: 0)
-                print(paddedName  + " : \(time)")
+                print(paddedName  + " : \(time.toTime24())")
             }
         }
     }
@@ -93,7 +93,7 @@ class MasterViewController: UITableViewController {
 
         let (timeName, time) = todayTimes[indexPath.row]
         cell.textLabel!.text = timeName.toString()
-        cell.detailTextLabel!.text = time as? String
+        cell.detailTextLabel!.text = time.toTime12()
         return cell
     }
 
@@ -113,4 +113,3 @@ class MasterViewController: UITableViewController {
 
 
 }
-

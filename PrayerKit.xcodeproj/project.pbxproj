@@ -18,6 +18,7 @@
 		FA05F66321B314330051EA2A /* AKPrayerTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA05F65C21B314330051EA2A /* AKPrayerTime.framework */; };
 		FA05F66421B314330051EA2A /* AKPrayerTime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA05F65C21B314330051EA2A /* AKPrayerTime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FA05F66921B314470051EA2A /* AKPrayerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */; };
+		FA105FE721B579CA005DEE8F /* AKPrayerTime+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		FA05F65C21B314330051EA2A /* AKPrayerTime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AKPrayerTime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA05F65E21B314330051EA2A /* AKPrayerTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AKPrayerTime.h; sourceTree = "<group>"; };
 		FA05F65F21B314330051EA2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AKPrayerTime+Formatting.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +169,7 @@
 			children = (
 				FA05F65E21B314330051EA2A /* AKPrayerTime.h */,
 				3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */,
+				FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */,
 				FA05F65F21B314330051EA2A /* Info.plist */,
 			);
 			path = AKPrayerTime;
@@ -335,6 +338,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA105FE721B579CA005DEE8F /* AKPrayerTime+Formatting.swift in Sources */,
 				FA05F66921B314470051EA2A /* AKPrayerTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

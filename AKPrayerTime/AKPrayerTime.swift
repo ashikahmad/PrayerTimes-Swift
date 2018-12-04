@@ -232,7 +232,7 @@ public final class AKPrayerTime {
     
     /// Once 'computePrayerTimes' is called,
     /// computed values are stored here for reuse
-    public var currentPrayerTimes:[TimeNames: Double]?
+    public var currentPrayerTimes:[TimeNames: Time]?
     
     /// Prayer calculation methods.
     /// See `CalculationMethod` enums for more details
@@ -305,7 +305,7 @@ public final class AKPrayerTime {
     //------------------------------------------------------
     
     /// Return prayer times for a given date, latitude, longitude and timeZone
-    public func getDatePrayerTimes(year: Int, month: Int, day: Int, latitude: Double, longitude: Double, tZone: Float)-> [TimeNames: Any] {
+    public func getDatePrayerTimes(year: Int, month: Int, day: Int, latitude: Double, longitude: Double, tZone: Float)-> [TimeNames: Time] {
         coordinate = Coordinate(lat: latitude, lng: longitude)
         
         var comp = DateComponents()
@@ -325,7 +325,7 @@ public final class AKPrayerTime {
     }
     
     /// Returns prayer times for a date(or today) when everything is set
-    public func getPrayerTimes()->[TimeNames: Any]? {
+    public func getPrayerTimes()->[TimeNames: Time]? {
         // If coordinate is not set, cannot obtain prayer times
         if coordinate == nil {
             return nil
@@ -340,7 +340,7 @@ public final class AKPrayerTime {
         return computeDayTimes()
     }
 
-    public func sorted(_ t: [TimeNames: Any]) -> [(TimeNames, Any)] {
+    public func sorted(_ t: [TimeNames: Time]) -> [(TimeNames, Time)] {
         let seq: [AKPrayerTime.TimeNames] = [.imsak, .fajr, .sunrise,
                                              .dhuhr, .asr, .sunset,
                                              .maghrib, .isha, .midnight, .qiyam]
@@ -392,57 +392,57 @@ public final class AKPrayerTime {
         setCustomParams { $0.midnight = method }
     }
     
-    //------------------------------------------------------
-    // MARK: - Public Methods: Format Conversion
-    //------------------------------------------------------
-    
-    /// Convert float hours to (hours, minutes)
-    func floatToHourMinute(_ time: Double)-> (hours: Int, minutes: Int)? {
-        if time.isNaN {
-            return nil
-        }
-        
-        let ttime = fixHour(time + 0.5 / 60.0)  // add 0.5 minutes to round
-        let hours = Int(floor(ttime))
-        let minutes = Int(floor((ttime - Double(hours)) * 60.0))
-        
-        return (hours: hours, minutes: minutes)
-    }
-    
-    /// Convert float hours to 24h format
-    func floatToTime24(_ time:Double)->String {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            return NSString(format: "%02d:%02d", hours, minutes) as String
-        } else {
-            return "---"
-        }
-    }
-    
-    /// Convert float hours to 12h format
-    func floatToTime12(_ time:Double, noSuffix:Bool)->String {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            return NSString(format: "%02d:%02d%@", (hours % 12), minutes, (noSuffix ? "" : ((hours > 12) ? " pm" : " am")) ) as String
-        } else {
-            return "---"
-        }
-    }
-    
-    /// Convert float hours to 12h format with no suffix
-    func floatToTime12NS(_ time:Double)->String {
-        return floatToTime12(time, noSuffix: true)
-    }
-    
-    /// Convert float hours to NSDate
-    func floatToNSDate(_ time:Double)->Date? {
-        if let (hours, minutes) = floatToHourMinute(time) {
-            var components = Defaults.calendar.dateComponents(Defaults.componentsDMY, from: calcDate)
-            components.hour = hours
-            components.minute = minutes
-            return Defaults.calendar.date(from: components)
-        } else {
-            return nil
-        }
-    }
+//    //------------------------------------------------------
+//    // MARK: - Public Methods: Format Conversion
+//    //------------------------------------------------------
+//    
+//    /// Convert float hours to (hours, minutes)
+//    func floatToHourMinute(_ time: Double)-> (hours: Int, minutes: Int)? {
+//        if time.isNaN {
+//            return nil
+//        }
+//        
+//        let ttime = fixHour(time + 0.5 / 60.0)  // add 0.5 minutes to round
+//        let hours = Int(floor(ttime))
+//        let minutes = Int(floor((ttime - Double(hours)) * 60.0))
+//        
+//        return (hours: hours, minutes: minutes)
+//    }
+//    
+//    /// Convert float hours to 24h format
+//    func floatToTime24(_ time:Double)->String {
+//        if let (hours, minutes) = floatToHourMinute(time) {
+//            return NSString(format: "%02d:%02d", hours, minutes) as String
+//        } else {
+//            return "---"
+//        }
+//    }
+//    
+//    /// Convert float hours to 12h format
+//    func floatToTime12(_ time:Double, noSuffix:Bool)->String {
+//        if let (hours, minutes) = floatToHourMinute(time) {
+//            return NSString(format: "%02d:%02d%@", (hours % 12), minutes, (noSuffix ? "" : ((hours > 12) ? " pm" : " am")) ) as String
+//        } else {
+//            return "---"
+//        }
+//    }
+//    
+//    /// Convert float hours to 12h format with no suffix
+//    func floatToTime12NS(_ time:Double)->String {
+//        return floatToTime12(time, noSuffix: true)
+//    }
+//    
+//    /// Convert float hours to NSDate
+//    func floatToNSDate(_ time:Double)->Date? {
+//        if let (hours, minutes) = floatToHourMinute(time) {
+//            var components = Defaults.calendar.dateComponents(Defaults.componentsDMY, from: calcDate)
+//            components.hour = hours
+//            components.minute = minutes
+//            return Defaults.calendar.date(from: components)
+//        } else {
+//            return nil
+//        }
+//    }
     
     //------------------------------------------------------
     // MARK: - Julian Date Calculation
@@ -592,7 +592,7 @@ public final class AKPrayerTime {
     }
     
     // compute prayer times at given julian date
-    private func computeDayTimes()-> [TimeNames: Any] {
+    private func computeDayTimes()-> [TimeNames: Time] {
         //default times
         let times = Defaults.dayTimes;
         
@@ -621,11 +621,11 @@ public final class AKPrayerTime {
         
         t2 = tuneTimes(t2)
         
-        //Set prayerTimesCurrent here!!
-        currentPrayerTimes = t2
 
-        let t3 = adjustTimesFormat(t2)
-        
+        let t3 = t2.mapValues { Time(duration: $0) } //adjustTimesFormat(t2)
+        //Set prayerTimesCurrent here!!
+        currentPrayerTimes = t3
+
         return t3
     }
     
@@ -651,7 +651,7 @@ public final class AKPrayerTime {
     }
     
     // range reduce hours to 0..23
-    private func fixHour(_ a:Double)->Double {
+    private func fixHour(_ a: Double)-> Double {
         return DMath.wrap(a, min: 0, max: 24)
     }
     
@@ -659,10 +659,11 @@ public final class AKPrayerTime {
     private func adjustTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
         var ttimes = times
 
-        for (timeName, time) in ttimes {
-            ttimes[timeName] = time + (Double(timeZone) - coordinate!.longitude / 15.0);
-        }
-        
+        ttimes = ttimes.mapValues { $0 + (Double(timeZone) - coordinate!.longitude / 15.0) }
+//        for (timeName, time) in ttimes {
+//            ttimes[timeName] = time + (Double(timeZone) - coordinate!.longitude / 15.0);
+//        }
+
         if (highLatitudeAdjustment != .none){
             ttimes = adjustHighLatTimes(ttimes)
         }
@@ -687,25 +688,25 @@ public final class AKPrayerTime {
     }
     
     // convert times array to given time format
-    private func adjustTimesFormat(_ times: [TimeNames: Double])-> [TimeNames: Any] {
-        var ttimes: [TimeNames: Any] = [TimeNames: Any]()
-        
-        for (timeName, time) in times {
-            if (outputFormat == OutputTimeFormat.float) {
-                ttimes[timeName] = time as AnyObject
-            } else if (outputFormat == OutputTimeFormat.time12) {
-                ttimes[timeName] = floatToTime12(time, noSuffix: false)
-            } else if (outputFormat == OutputTimeFormat.time12NoSuffix) {
-                ttimes[timeName] = floatToTime12(time, noSuffix:true)
-            } else if (outputFormat == OutputTimeFormat.time24){
-                ttimes[timeName] = floatToTime24(time)
-            } else {
-                // floatToNSDate can return nil, if time is invalid
-                ttimes[timeName] = floatToNSDate(time)
-            }
-        }
-        return ttimes;
-    }
+//    private func adjustTimesFormat(_ times: [TimeNames: Double])-> [TimeNames: Any] {
+//        var ttimes: [TimeNames: Any] = [TimeNames: Any]()
+//        
+//        for (timeName, time) in times {
+//            if (outputFormat == OutputTimeFormat.float) {
+//                ttimes[timeName] = time as AnyObject
+//            } else if (outputFormat == OutputTimeFormat.time12) {
+//                ttimes[timeName] = floatToTime12(time, noSuffix: false)
+//            } else if (outputFormat == OutputTimeFormat.time12NoSuffix) {
+//                ttimes[timeName] = floatToTime12(time, noSuffix:true)
+//            } else if (outputFormat == OutputTimeFormat.time24){
+//                ttimes[timeName] = floatToTime24(time)
+//            } else {
+//                // floatToNSDate can return nil, if time is invalid
+//                ttimes[timeName] = floatToNSDate(time)
+//            }
+//        }
+//        return ttimes;
+//    }
     
     // adjust Fajr, Isha and Maghrib for locations in higher latitudes
     private func adjustHighLatTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
