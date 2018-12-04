@@ -11,7 +11,6 @@ import AKPrayerTime
 
 class MasterViewController: UITableViewController {
 
-    var detailViewController: DetailViewController? = nil
 //    var objects = NSMutableArray()
     var todayTimes:[(AKPrayerTime.TimeNames, AKPrayerTime.Time)] = []
 
