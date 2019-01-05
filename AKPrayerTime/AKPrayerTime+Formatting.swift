@@ -28,3 +28,24 @@ public extension AKPrayerTime.Time {
         return String(format: "%02d:%02d", hours, minutes)
     }
 }
+
+extension AKPrayerTime.Time: Comparable {
+    
+    public static func < (lhs: AKPrayerTime.Time, rhs: AKPrayerTime.Time) -> Bool {
+        return lhs.duration < rhs.duration
+    }
+
+    public static func == (lhs: AKPrayerTime.Time, rhs: AKPrayerTime.Time) -> Bool {
+        return lhs.duration == rhs.duration
+    }
+}
+
+extension AKPrayerTime.Time {
+    func prevDayDuration() -> Double {
+        return duration - 24
+    }
+
+    func nextDayDuration() -> Double {
+        return duration + 24
+    }
+}

@@ -392,58 +392,6 @@ public final class AKPrayerTime {
         setCustomParams { $0.midnight = method }
     }
     
-//    //------------------------------------------------------
-//    // MARK: - Public Methods: Format Conversion
-//    //------------------------------------------------------
-//    
-//    /// Convert float hours to (hours, minutes)
-//    func floatToHourMinute(_ time: Double)-> (hours: Int, minutes: Int)? {
-//        if time.isNaN {
-//            return nil
-//        }
-//        
-//        let ttime = fixHour(time + 0.5 / 60.0)  // add 0.5 minutes to round
-//        let hours = Int(floor(ttime))
-//        let minutes = Int(floor((ttime - Double(hours)) * 60.0))
-//        
-//        return (hours: hours, minutes: minutes)
-//    }
-//    
-//    /// Convert float hours to 24h format
-//    func floatToTime24(_ time:Double)->String {
-//        if let (hours, minutes) = floatToHourMinute(time) {
-//            return NSString(format: "%02d:%02d", hours, minutes) as String
-//        } else {
-//            return "---"
-//        }
-//    }
-//    
-//    /// Convert float hours to 12h format
-//    func floatToTime12(_ time:Double, noSuffix:Bool)->String {
-//        if let (hours, minutes) = floatToHourMinute(time) {
-//            return NSString(format: "%02d:%02d%@", (hours % 12), minutes, (noSuffix ? "" : ((hours > 12) ? " pm" : " am")) ) as String
-//        } else {
-//            return "---"
-//        }
-//    }
-//    
-//    /// Convert float hours to 12h format with no suffix
-//    func floatToTime12NS(_ time:Double)->String {
-//        return floatToTime12(time, noSuffix: true)
-//    }
-//    
-//    /// Convert float hours to NSDate
-//    func floatToNSDate(_ time:Double)->Date? {
-//        if let (hours, minutes) = floatToHourMinute(time) {
-//            var components = Defaults.calendar.dateComponents(Defaults.componentsDMY, from: calcDate)
-//            components.hour = hours
-//            components.minute = minutes
-//            return Defaults.calendar.date(from: components)
-//        } else {
-//            return nil
-//        }
-//    }
-    
     //------------------------------------------------------
     // MARK: - Julian Date Calculation
     //------------------------------------------------------
@@ -594,39 +542,39 @@ public final class AKPrayerTime {
     // compute prayer times at given julian date
     private func computeDayTimes()-> [TimeNames: Time] {
         //default times
-        let times = Defaults.dayTimes;
+        var times = Defaults.dayTimes;
         
         // Compute minimum once
-        var t1 = computeTimes(times)
+        times = computeTimes(times)
         
         // If need more iterations...
         if numIterations > 1 {
             for _ in 2...numIterations {
-                t1 = computeTimes(times)
+                times = computeTimes(times)
             }
         }
         
-        var t2 = adjustTimes(t1)
+        times = adjustTimes(times)
 
         let nightTime: Double
         switch Defaults.methodParams[calculationMethod]!.midnight {
         case .standard:
-            nightTime = timeDiff(t2[.sunset]!, time2: t2[.sunrise]!)
+            nightTime = timeDiff(times[.sunset]!, time2: times[.sunrise]!)
         case .jafari:
-            nightTime = timeDiff(t2[.sunset]!, time2: t2[.fajr]!)
+            nightTime = timeDiff(times[.sunset]!, time2: times[.fajr]!)
         }
 
-        t2[.midnight] = t2[.sunset]! + nightTime/2
-        t2[.qiyam] = t2[.sunset]! + nightTime*2/3
+        times[.midnight] = times[.sunset]! + nightTime/2
+        times[.qiyam] = times[.sunset]! + nightTime*2/3
         
-        t2 = tuneTimes(t2)
+        times = tuneTimes(times)
         
 
-        let t3 = t2.mapValues { Time(duration: $0) } //adjustTimesFormat(t2)
+        let finalTimes = times.mapValues { Time(duration: $0) } //adjustTimesFormat(t2)
         //Set prayerTimesCurrent here!!
-        currentPrayerTimes = t3
+        currentPrayerTimes = finalTimes
 
-        return t3
+        return finalTimes
     }
     
     // Tune timings for adjustments
@@ -659,10 +607,8 @@ public final class AKPrayerTime {
     private func adjustTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
         var ttimes = times
 
-        ttimes = ttimes.mapValues { $0 + (Double(timeZone) - coordinate!.longitude / 15.0) }
-//        for (timeName, time) in ttimes {
-//            ttimes[timeName] = time + (Double(timeZone) - coordinate!.longitude / 15.0);
-//        }
+        let offset = (Double(timeZone) - coordinate!.longitude / 15.0)
+        ttimes = ttimes.mapValues { $0 + offset }
 
         if (highLatitudeAdjustment != .none){
             ttimes = adjustHighLatTimes(ttimes)
@@ -686,28 +632,7 @@ public final class AKPrayerTime {
         
         return ttimes;
     }
-    
-    // convert times array to given time format
-//    private func adjustTimesFormat(_ times: [TimeNames: Double])-> [TimeNames: Any] {
-//        var ttimes: [TimeNames: Any] = [TimeNames: Any]()
-//        
-//        for (timeName, time) in times {
-//            if (outputFormat == OutputTimeFormat.float) {
-//                ttimes[timeName] = time as AnyObject
-//            } else if (outputFormat == OutputTimeFormat.time12) {
-//                ttimes[timeName] = floatToTime12(time, noSuffix: false)
-//            } else if (outputFormat == OutputTimeFormat.time12NoSuffix) {
-//                ttimes[timeName] = floatToTime12(time, noSuffix:true)
-//            } else if (outputFormat == OutputTimeFormat.time24){
-//                ttimes[timeName] = floatToTime24(time)
-//            } else {
-//                // floatToNSDate can return nil, if time is invalid
-//                ttimes[timeName] = floatToNSDate(time)
-//            }
-//        }
-//        return ttimes;
-//    }
-    
+
     // adjust Fajr, Isha and Maghrib for locations in higher latitudes
     private func adjustHighLatTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
 
@@ -722,62 +647,29 @@ public final class AKPrayerTime {
         let nightTime = timeDiff(sunset, time2: sunrise)
 
         if let imsak = ttimes[.imsak], case let .angles(angle) = imsakSettings {
-            ttimes[.imsak] = adjustHLTime(time: imsak, base: sunrise,
-                                          angle: angle, night: nightTime, ccw: true)
+            ttimes[.imsak] = adjustHLTime(
+                time: imsak, base: sunrise,
+                angle: angle, night: nightTime, ccw: true)
         }
 
         if let fajr = ttimes[.fajr] {
-            ttimes[.fajr] = adjustHLTime(time: fajr, base: sunrise,
-                                     angle: params.fajrAngle, night: nightTime, ccw: true)
+            ttimes[.fajr] = adjustHLTime(
+                time: fajr, base: sunrise,
+                angle: params.fajrAngle, night: nightTime, ccw: true)
         }
 
         if let maghrib = ttimes[.maghrib], case let .angles(angle) = params.maghrib {
-            ttimes[.maghrib] = adjustHLTime(time: maghrib, base: sunset,
-                                            angle: angle, night: nightTime, ccw: false)
+            ttimes[.maghrib] = adjustHLTime(
+                time: maghrib, base: sunset,
+                angle: angle, night: nightTime, ccw: false)
         }
 
         if let isha = ttimes[.isha], case let .angles(angle) = params.isha {
-            ttimes[.isha] = adjustHLTime(time: isha, base: sunset,
-                                            angle: angle, night: nightTime, ccw: false)
+            ttimes[.isha] = adjustHLTime(
+                time: isha, base: sunset,
+                angle: angle, night: nightTime, ccw: false)
         }
 
-        /*
-
-        // Adjust Fajr
-        let fajrDiff = nightPortion(angle: params.fajrAngle, night: nightTime)
-//        if let fajr = ttimes[TimeNames.fajr],
-//            !fajr.isNaN,
-
-        if (ttimes[TimeNames.fajr]!.isNaN || timeDiff(ttimes[TimeNames.fajr]!, time2: ttimes[TimeNames.sunrise]!) > fajrDiff) {
-            ttimes[TimeNames.fajr] = ttimes[TimeNames.sunrise]! - fajrDiff
-        }
-        
-        // Adjust Isha
-        let ishaAngle:Double = {
-            switch params.isha {
-            case .angles(let angle): return angle
-            default: return 18.0
-            }
-        }()
-        let ishaDiff:Double = nightPortion(angle: ishaAngle, night: nightTime)
-        if (ttimes[TimeNames.isha]!.isNaN || timeDiff(ttimes[TimeNames.sunset]!, time2: ttimes[TimeNames.isha]!) > ishaDiff) {
-            ttimes[TimeNames.isha] = ttimes[TimeNames.sunset]! + ishaDiff
-        }
-        
-        // Adjust Maghrib
-        let maghribAngle:Double = {
-            switch params.maghrib {
-            case .angles(let angle): return angle
-            default: return 4.0
-            }
-        }()
-        
-        let maghribDiff:Double = nightPortion(angle: maghribAngle, night: nightTime)
-        if let maghrib = ttimes[.maghrib],
-            timeDiff(ttimes[.sunset]!, time2: maghrib) > maghribDiff {
-            ttimes[.maghrib] = ttimes[.sunset]! + maghribDiff
-        }
-        */
         return ttimes;
     }
 
