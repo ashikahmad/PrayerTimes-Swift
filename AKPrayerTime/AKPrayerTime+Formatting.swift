@@ -9,22 +9,24 @@
 import Foundation
 
 public extension AKPrayerTime.Time {
-    public func toDate(base date: Date = Date(),
-                       calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+
+    func toDate(base date: Date = Date(),
+                calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
         var components = calendar.dateComponents([.year, .month, .day], from: date)
         components.hour = hours
         components.minute = minutes
         return calendar.date(from: components) ?? date
     }
 
-    public func toTime12(showSuffix: Bool = true) -> String {
-        return String(format: "%02d:%02d%@",
-                      (hours % 12),
-                      minutes,
-                      (showSuffix ? ((hours > 12) ? " pm" : " am") : "")  )
+    func toTime12(showSuffix: Bool = true) -> String {
+        var h = hours % 12
+        let m = minutes
+        let a = (showSuffix ? ((hours > 12) ? " pm" : " am") : "")
+        if h == 0 { h = 12 }
+        return String(format: "%02d:%02d%@", h, m, a)
     }
 
-    public func toTime24() -> String {
+    func toTime24() -> String {
         return String(format: "%02d:%02d", hours, minutes)
     }
 }

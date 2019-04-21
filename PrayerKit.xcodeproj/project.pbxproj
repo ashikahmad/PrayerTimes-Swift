@@ -18,6 +18,7 @@
 		FA05F66421B314330051EA2A /* AKPrayerTime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA05F65C21B314330051EA2A /* AKPrayerTime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FA05F66921B314470051EA2A /* AKPrayerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */; };
 		FA105FE721B579CA005DEE8F /* AKPrayerTime+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */; };
+		FA51C6A2226BA8800025655D /* DMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA51C6A1226BA8800025655D /* DMath.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		FA05F65E21B314330051EA2A /* AKPrayerTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AKPrayerTime.h; sourceTree = "<group>"; };
 		FA05F65F21B314330051EA2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AKPrayerTime+Formatting.swift"; sourceTree = "<group>"; };
+		FA51C6A1226BA8800025655D /* DMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DMath.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +161,7 @@
 				FA05F65E21B314330051EA2A /* AKPrayerTime.h */,
 				3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */,
 				FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */,
+				FA51C6A1226BA8800025655D /* DMath.swift */,
 				FA05F65F21B314330051EA2A /* Info.plist */,
 			);
 			path = AKPrayerTime;
@@ -262,6 +265,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -328,6 +332,7 @@
 			files = (
 				FA105FE721B579CA005DEE8F /* AKPrayerTime+Formatting.swift in Sources */,
 				FA05F66921B314470051EA2A /* AKPrayerTime.swift in Sources */,
+				FA51C6A2226BA8800025655D /* DMath.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

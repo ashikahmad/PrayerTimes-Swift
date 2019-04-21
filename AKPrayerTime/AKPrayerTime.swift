@@ -91,14 +91,6 @@ public final class AKPrayerTime {
         case angleBased
     }
     
-    public enum OutputTimeFormat {
-        case time24
-        case time12
-        case time12NoSuffix
-        case float
-        case date
-    }
-    
     public enum TimeNames : String {
         case imsak
         case fajr
@@ -162,46 +154,54 @@ public final class AKPrayerTime {
          as appropriate.
          */
         static var methodParams: [CalculationMethod: MethodParams] = [
-            .mwl: MethodParams(fajrAngle: 18,
-                               maghrib: .minutes(0),
-                               isha: .angles(17),
-                               midnight: .standard),
+            .mwl: MethodParams(
+                fajrAngle: 18,
+                maghrib: .minutes(0),
+                isha: .angles(17),
+                midnight: .standard),
 
-            .isna: MethodParams(fajrAngle: 15,
-                                maghrib: .minutes(0),
-                                isha: .angles(15),
-                                midnight: .standard),
+            .isna: MethodParams(
+                fajrAngle: 15,
+                maghrib: .minutes(0),
+                isha: .angles(15),
+                midnight: .standard),
 
-            .egypt: MethodParams(fajrAngle: 19.5,
-                                 maghrib: .minutes(0),
-                                 isha: .angles(17.5),
-                                 midnight: .standard),
+            .egypt: MethodParams(
+                fajrAngle: 19.5,
+                maghrib: .minutes(0),
+                isha: .angles(17.5),
+                midnight: .standard),
 
             // fajrAngle was 19 degrees before 1430 hijri
-            .makkah: MethodParams(fajrAngle: 18.5,
-                                  maghrib: .minutes(0),
-                                  isha: .minutes(90),
-                                  midnight: .standard),
+            .makkah: MethodParams(
+                fajrAngle: 18.5,
+                maghrib: .minutes(0),
+                isha: .minutes(90),
+                midnight: .standard),
 
-            .karachi: MethodParams(fajrAngle: 18,
-                                   maghrib: .minutes(0),
-                                   isha: .angles(18),
-                                   midnight: .standard),
+            .karachi: MethodParams(
+                fajrAngle: 18,
+                maghrib: .minutes(0),
+                isha: .angles(18),
+                midnight: .standard),
 
-            .tehran: MethodParams(fajrAngle: 17.7,
-                                  maghrib: .angles(4.5),
-                                  isha: .angles(14),
-                                  midnight: .jafari),
+            .tehran: MethodParams(
+                fajrAngle: 17.7,
+                maghrib: .angles(4.5),
+                isha: .angles(14),
+                midnight: .jafari),
 
-            .jafari: MethodParams(fajrAngle: 16,
-                                  maghrib: .angles(4),
-                                  isha: .angles(14),
-                                  midnight: .jafari),
+            .jafari: MethodParams(
+                fajrAngle: 16,
+                maghrib: .angles(4),
+                isha: .angles(14),
+                midnight: .jafari),
 
-            .custom: MethodParams(fajrAngle: 18,
-                                  maghrib: .minutes(0),
-                                  isha: .angles(17),
-                                  midnight: .standard)
+            .custom: MethodParams(
+                fajrAngle: 18,
+                maghrib: .minutes(0),
+                isha: .angles(17),
+                midnight: .standard)
         ]
     }
 
@@ -242,8 +242,8 @@ public final class AKPrayerTime {
     /// Adjustment options for Higher Latitude
     public var highLatitudeAdjustment = HigherLatutudeAdjustment.midNight
     /// Prayer time output format.
-    public var outputFormat           = OutputTimeFormat.time24
-    
+//    public var outputFormat           = OutputTimeFormat.time24
+
     public var imsakSettings: AnglesOrMinutes = .minutes(10)
     
     // Not sure if it should be replaced by offsets[.Dhuhr]
@@ -706,82 +706,6 @@ public final class AKPrayerTime {
         }
         return ttimes
     }
-    
-}
-
-// ------------------------------------------------------
-// MARK: - Trigonometric Functions
-// ------------------------------------------------------
-
-class DMath {
-    class func wrap(_ a: Double, min: Double, max: Double)-> Double {
-        var aa = a
-        let range = max - min
-        aa.formTruncatingRemainder(dividingBy: range)
-        if aa < min { aa += range }
-        if aa > max { aa -= range }
-        return aa
-    }
-    
-    // range reduce angle in degrees.
-    class func fixAngle(_ a: Double)-> Double {
-        return wrap(a, min: 0, max: 360)
-    }
-    
-    // radian to degree
-    class func radiansToDegrees(_ alpha: Double) -> Double{
-        return ((alpha*180.0) / Double.pi);
-    }
-    
-    // deree to radian
-    class func degreesToRadians(_ alpha: Double)-> Double {
-        return ((alpha*Double.pi)/180.0);
-    }
-    
-    // degree sin
-    class func dSin(_ d: Double)-> Double {
-        return sin(degreesToRadians(d))
-    }
-    
-    // degree cos
-    class func dCos(_ d: Double)-> Double {
-        return cos(degreesToRadians(d))
-    }
-    
-    // degree tan
-    class func dTan(_ d: Double)-> Double {
-        return tan(degreesToRadians(d))
-    }
-    
-    // degree arcsin
-    class func dArcSin(_ x: Double)-> Double {
-        let val = asin(x)
-        return radiansToDegrees(val)
-    }
-    
-    // degree arccos
-    class func dArcCos(_ x: Double)-> Double {
-        let val = acos(x);
-        return radiansToDegrees(val)
-    }
-    
-    // degree arctan
-    class func dArcTan(_ x: Double)-> Double {
-        let val = atan(x);
-        return radiansToDegrees(val)
-    }
-    
-    // degree arctan2
-    class func dArcTan2(_ y: Double, x: Double)-> Double {
-        let val = atan2(y, x);
-        return radiansToDegrees(val)
-    }
-    
-    // degree arccot
-    class func dArcCot(_ x: Double)-> Double {
-        let val = atan2(1.0, x);
-        return radiansToDegrees(val)
-    }
 }
 
 /*
@@ -795,7 +719,7 @@ class DMath {
  6. Format
 
  BASE TIMES (Must be Angle-based calculation)
- ------------------------------------
+ --------------------------------------------
  0. Mid-day (Dhuhr)
  1. Sunrise
  2. Sunset
@@ -812,5 +736,21 @@ class DMath {
  -----------------------------------------
  1. Midnight (Based on Sunset-Fajr or Sunset-sunrise)
  2. Qiyam Al-lyle (Based on Sunset-Fajr or Sunset-sunrise)
+
+
+
+ Declination is calculated with the following formula:
+ d = 23.45 * sin [360 / 365 * (284 + N)]
+
+ Where:
+ d = declination
+ N = day number, January 1 = day 1
+
+ ===========================================
+ FEATURES TODO
+ ===========================================
+ -[x] Separate time format from calculation flow
+ -[ ] Get prayer times for array/range of dates (i.e. for week or month)
+ -[ ] Get current prayer time: time name, start time, remaining time
 
  */
