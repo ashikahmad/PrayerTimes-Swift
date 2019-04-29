@@ -9,7 +9,7 @@
 import UIKit
 import AKPrayerTime
 
-class MasterViewController: UITableViewController {
+class MasterVC: UITableViewController {
 
     var todayTimes:[(AKPrayerTime.TimeNames, AKPrayerTime.Time)] = []
 
@@ -24,19 +24,19 @@ class MasterViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        updateTimes()
+    }
 
-        // ================================================
-        // Test Values
-        // ------------------------------------------------
-        // (lat: 23.810332, lng: 90.4125181)    ~~> tz: +6
-        // (lat: 43.6605, lng: -79.4633)        ~~> tz: -5
-        // ================================================
-        let prayerKit:AKPrayerTime = AKPrayerTime(lat: 23.810332, lng: 90.4125181)
-        prayerKit.calculationMethod = .karachi
-        prayerKit.asrJuristic = .hanafi
-        // prayerKit.timeZone = -5.0
-        prayerKit.setMidnightMethod(.jafari)
+    func updateTimes() {
+        let prayerKit:AKPrayerTime = AKPrayerTime(
+            lat: Config.global.coordinate.latitude,
+            lng: Config.global.coordinate.longitude)
+        prayerKit.calculationMethod = Config.global.calcMethod
+        prayerKit.asrJuristic = Config.global.asrMethod
+         prayerKit.timeZone = Config.global.gmtOffset
+        prayerKit.highLatitudeAdjustment = Config.global.highLat
+        prayerKit.setMidnightMethod(Config.global.midnight)
+
         let times = prayerKit.getPrayerTimes()
         if let t = times {
             todayTimes = prayerKit.sorted(t)
@@ -46,6 +46,22 @@ class MasterViewController: UITableViewController {
                 print(paddedName  + " : \(time.toTime24())")
             }
         }
+
+        let lbl = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 30))
+        lbl.autoresizingMask = [.flexibleWidth]
+        lbl.font = UIFont.boldSystemFont(ofSize: 12)
+        lbl.textAlignment = .center
+        lbl.backgroundColor = #colorLiteral(red: 0.9467939734, green: 0.9468161464, blue: 0.9468042254, alpha: 1)
+        lbl.text = [Config.global.address, "TimeZone \(Config.global.gmtOffset)"]
+            .compactMap { $0 }
+            .joined(separator: " | ")
+        tableView.tableHeaderView = lbl
+    }
+
+    @IBAction func gotoSettings(_ sender: Any) {
+        let vc = SettingsVC()
+        vc.delegate = self
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     // MARK: - Table View
@@ -65,5 +81,12 @@ class MasterViewController: UITableViewController {
         cell.textLabel!.text = timeName.toString()
         cell.detailTextLabel!.text = time.toTime12()
         return cell
+    }
+    
+}
+
+extension MasterVC: SettingsVCDelegate {
+    func applyConfig() {
+        updateTimes()
     }
 }

@@ -109,11 +109,11 @@ public final class AKPrayerTime {
     }
     
     public struct Coordinate {
-        var latitude: Double
-        var longitude: Double
-        var elevation: Double
+        public var latitude: Double
+        public var longitude: Double
+        public var elevation: Double
         
-        init(lat: Double, lng: Double, elv: Double = 0) {
+        public init(lat: Double, lng: Double, elv: Double = 0) {
             latitude = lat
             longitude = lng
             elevation = elv

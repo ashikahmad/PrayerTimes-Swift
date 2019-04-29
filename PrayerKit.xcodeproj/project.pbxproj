@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3310D29882B4AACDD718342A /* Pods_PrayerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B529A6DC82CD6D5E9DDD7808 /* Pods_PrayerKit.framework */; };
 		3B69634C1ADD8C0B00D036E8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69634B1ADD8C0B00D036E8 /* AppDelegate.swift */; };
-		3B69634E1ADD8C0B00D036E8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69634D1ADD8C0B00D036E8 /* MasterViewController.swift */; };
 		3B6963531ADD8C0B00D036E8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B6963511ADD8C0B00D036E8 /* Main.storyboard */; };
 		3B6963551ADD8C0B00D036E8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B6963541ADD8C0B00D036E8 /* Images.xcassets */; };
 		3B6963581ADD8C0B00D036E8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B6963561ADD8C0B00D036E8 /* LaunchScreen.xib */; };
 		3B6963641ADD8C0B00D036E8 /* PrayerKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6963631ADD8C0B00D036E8 /* PrayerKitTests.swift */; };
+		4E4B9F11DB95A36993F1E204 /* Pods_PrayerKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD20D7D12F043BF4386FDEC /* Pods_PrayerKitTests.framework */; };
+		D7AAD13115F6755DD5E2CEA7 /* Pods_AKPrayerTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90CA868D621FF071CC4675F2 /* Pods_AKPrayerTime.framework */; };
 		FA05F66021B314330051EA2A /* AKPrayerTime.h in Headers */ = {isa = PBXBuildFile; fileRef = FA05F65E21B314330051EA2A /* AKPrayerTime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA05F66321B314330051EA2A /* AKPrayerTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA05F65C21B314330051EA2A /* AKPrayerTime.framework */; };
 		FA05F66421B314330051EA2A /* AKPrayerTime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA05F65C21B314330051EA2A /* AKPrayerTime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FA05F66921B314470051EA2A /* AKPrayerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */; };
 		FA105FE721B579CA005DEE8F /* AKPrayerTime+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */; };
+		FA3032E22274C95D00E283D1 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3032E12274C95D00E283D1 /* SettingsVC.swift */; };
+		FA3032E52274D0F400E283D1 /* LocationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3032E42274D0F400E283D1 /* LocationRow.swift */; };
+		FA3032E72275EE1F00E283D1 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3032E62275EE1F00E283D1 /* Config.swift */; };
+		FA3032E92276122F00E283D1 /* MasterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3032E82276122F00E283D1 /* MasterVC.swift */; };
 		FA51C6A2226BA8800025655D /* DMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA51C6A1226BA8800025655D /* DMath.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,10 +59,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0EB8BEF40F87A45B9398323C /* Pods-AKPrayerTime.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AKPrayerTime.debug.xcconfig"; path = "Target Support Files/Pods-AKPrayerTime/Pods-AKPrayerTime.debug.xcconfig"; sourceTree = "<group>"; };
 		3B6963461ADD8C0B00D036E8 /* PrayerKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrayerKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B69634A1ADD8C0B00D036E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B69634B1ADD8C0B00D036E8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3B69634D1ADD8C0B00D036E8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		3B6963521ADD8C0B00D036E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3B6963541ADD8C0B00D036E8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3B6963571ADD8C0B00D036E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -64,10 +70,22 @@
 		3B6963621ADD8C0B00D036E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B6963631ADD8C0B00D036E8 /* PrayerKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerKitTests.swift; sourceTree = "<group>"; };
 		3B69636E1ADD8DAF00D036E8 /* AKPrayerTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AKPrayerTime.swift; sourceTree = "<group>"; };
+		557DA25C7C0F09959B8E9DC0 /* Pods-PrayerKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PrayerKit.debug.xcconfig"; path = "Target Support Files/Pods-PrayerKit/Pods-PrayerKit.debug.xcconfig"; sourceTree = "<group>"; };
+		5DD20D7D12F043BF4386FDEC /* Pods_PrayerKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PrayerKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8988EBE571701A61FBC3EB34 /* Pods-AKPrayerTime.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AKPrayerTime.release.xcconfig"; path = "Target Support Files/Pods-AKPrayerTime/Pods-AKPrayerTime.release.xcconfig"; sourceTree = "<group>"; };
+		90CA868D621FF071CC4675F2 /* Pods_AKPrayerTime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AKPrayerTime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97591B3BFE663B399BA9537B /* Pods-PrayerKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PrayerKitTests.release.xcconfig"; path = "Target Support Files/Pods-PrayerKitTests/Pods-PrayerKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		B529A6DC82CD6D5E9DDD7808 /* Pods_PrayerKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PrayerKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E63076A296D86205DC392EFF /* Pods-PrayerKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PrayerKit.release.xcconfig"; path = "Target Support Files/Pods-PrayerKit/Pods-PrayerKit.release.xcconfig"; sourceTree = "<group>"; };
+		EA2EC79A0C190A62D15203BD /* Pods-PrayerKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PrayerKitTests.debug.xcconfig"; path = "Target Support Files/Pods-PrayerKitTests/Pods-PrayerKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA05F65C21B314330051EA2A /* AKPrayerTime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AKPrayerTime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA05F65E21B314330051EA2A /* AKPrayerTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AKPrayerTime.h; sourceTree = "<group>"; };
 		FA05F65F21B314330051EA2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA105FE621B579CA005DEE8F /* AKPrayerTime+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AKPrayerTime+Formatting.swift"; sourceTree = "<group>"; };
+		FA3032E12274C95D00E283D1 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		FA3032E42274D0F400E283D1 /* LocationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRow.swift; sourceTree = "<group>"; };
+		FA3032E62275EE1F00E283D1 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		FA3032E82276122F00E283D1 /* MasterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterVC.swift; sourceTree = "<group>"; };
 		FA51C6A1226BA8800025655D /* DMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DMath.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +95,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA05F66321B314330051EA2A /* AKPrayerTime.framework in Frameworks */,
+				3310D29882B4AACDD718342A /* Pods_PrayerKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E4B9F11DB95A36993F1E204 /* Pods_PrayerKitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,12 +111,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7AAD13115F6755DD5E2CEA7 /* Pods_AKPrayerTime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2DB34630EC6B02423D642270 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				90CA868D621FF071CC4675F2 /* Pods_AKPrayerTime.framework */,
+				B529A6DC82CD6D5E9DDD7808 /* Pods_PrayerKit.framework */,
+				5DD20D7D12F043BF4386FDEC /* Pods_PrayerKitTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3B69633D1ADD8C0A00D036E8 = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +135,8 @@
 				3B6963601ADD8C0B00D036E8 /* PrayerKitTests */,
 				FA05F65D21B314330051EA2A /* AKPrayerTime */,
 				3B6963471ADD8C0B00D036E8 /* Products */,
+				DD46303DB709D38839C51EB2 /* Pods */,
+				2DB34630EC6B02423D642270 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -121,7 +154,10 @@
 			isa = PBXGroup;
 			children = (
 				3B69634B1ADD8C0B00D036E8 /* AppDelegate.swift */,
-				3B69634D1ADD8C0B00D036E8 /* MasterViewController.swift */,
+				FA3032E62275EE1F00E283D1 /* Config.swift */,
+				FA3032E42274D0F400E283D1 /* LocationRow.swift */,
+				FA3032E82276122F00E283D1 /* MasterVC.swift */,
+				FA3032E12274C95D00E283D1 /* SettingsVC.swift */,
 				3B6963511ADD8C0B00D036E8 /* Main.storyboard */,
 				3B6963541ADD8C0B00D036E8 /* Images.xcassets */,
 				3B6963561ADD8C0B00D036E8 /* LaunchScreen.xib */,
@@ -155,6 +191,19 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DD46303DB709D38839C51EB2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0EB8BEF40F87A45B9398323C /* Pods-AKPrayerTime.debug.xcconfig */,
+				8988EBE571701A61FBC3EB34 /* Pods-AKPrayerTime.release.xcconfig */,
+				557DA25C7C0F09959B8E9DC0 /* Pods-PrayerKit.debug.xcconfig */,
+				E63076A296D86205DC392EFF /* Pods-PrayerKit.release.xcconfig */,
+				EA2EC79A0C190A62D15203BD /* Pods-PrayerKitTests.debug.xcconfig */,
+				97591B3BFE663B399BA9537B /* Pods-PrayerKitTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FA05F65D21B314330051EA2A /* AKPrayerTime */ = {
 			isa = PBXGroup;
 			children = (
@@ -185,10 +234,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3B6963671ADD8C0B00D036E8 /* Build configuration list for PBXNativeTarget "PrayerKit" */;
 			buildPhases = (
+				3C22765D8288D71AD635FC4B /* [CP] Check Pods Manifest.lock */,
 				3B6963421ADD8C0A00D036E8 /* Sources */,
 				3B6963431ADD8C0A00D036E8 /* Frameworks */,
 				3B6963441ADD8C0A00D036E8 /* Resources */,
 				FA05F66821B314330051EA2A /* Embed Frameworks */,
+				22AF1559D710AAD019720870 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -204,6 +255,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3B69636A1ADD8C0B00D036E8 /* Build configuration list for PBXNativeTarget "PrayerKitTests" */;
 			buildPhases = (
+				D21171011C4AE235F1628218 /* [CP] Check Pods Manifest.lock */,
 				3B6963591ADD8C0B00D036E8 /* Sources */,
 				3B69635A1ADD8C0B00D036E8 /* Frameworks */,
 				3B69635B1ADD8C0B00D036E8 /* Resources */,
@@ -222,6 +274,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA05F66721B314330051EA2A /* Build configuration list for PBXNativeTarget "AKPrayerTime" */;
 			buildPhases = (
+				7DF08DD03FE7F4B2911164C3 /* [CP] Check Pods Manifest.lock */,
 				FA05F65721B314330051EA2A /* Headers */,
 				FA05F65821B314330051EA2A /* Sources */,
 				FA05F65921B314330051EA2A /* Frameworks */,
@@ -308,13 +361,107 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		22AF1559D710AAD019720870 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PrayerKit/Pods-PrayerKit-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PrayerKit/Pods-PrayerKit-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3C22765D8288D71AD635FC4B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PrayerKit-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7DF08DD03FE7F4B2911164C3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AKPrayerTime-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D21171011C4AE235F1628218 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PrayerKitTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3B6963421ADD8C0A00D036E8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B69634E1ADD8C0B00D036E8 /* MasterViewController.swift in Sources */,
+				FA3032E52274D0F400E283D1 /* LocationRow.swift in Sources */,
+				FA3032E92276122F00E283D1 /* MasterVC.swift in Sources */,
+				FA3032E72275EE1F00E283D1 /* Config.swift in Sources */,
 				3B69634C1ADD8C0B00D036E8 /* AppDelegate.swift in Sources */,
+				FA3032E22274C95D00E283D1 /* SettingsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,12 +599,14 @@
 		};
 		3B6963681ADD8C0B00D036E8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 557DA25C7C0F09959B8E9DC0 /* Pods-PrayerKit.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5DV6KZN6C5;
 				INFOPLIST_FILE = PrayerKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -466,12 +615,14 @@
 		};
 		3B6963691ADD8C0B00D036E8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E63076A296D86205DC392EFF /* Pods-PrayerKit.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5DV6KZN6C5;
 				INFOPLIST_FILE = PrayerKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -480,6 +631,7 @@
 		};
 		3B69636B1ADD8C0B00D036E8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA2EC79A0C190A62D15203BD /* Pods-PrayerKitTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -500,6 +652,7 @@
 		};
 		3B69636C1ADD8C0B00D036E8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97591B3BFE663B399BA9537B /* Pods-PrayerKitTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -516,6 +669,7 @@
 		};
 		FA05F66521B314330051EA2A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0EB8BEF40F87A45B9398323C /* Pods-AKPrayerTime.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -564,6 +718,7 @@
 		};
 		FA05F66621B314330051EA2A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8988EBE571701A61FBC3EB34 /* Pods-AKPrayerTime.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
