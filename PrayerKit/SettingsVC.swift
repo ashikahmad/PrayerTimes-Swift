@@ -47,7 +47,7 @@ class SettingsVC: FormViewController {
             }
 
             +++ Section("Calculation")
-            <<< ActionSheetRow<AKPrayerTime.CalculationMethod>() {
+            <<< ActionSheetRow<CalculationMethod>() {
                 $0.title = "Calculation Method"
                 $0.displayValueFor = { c in c.map { String(describing: $0).capitalized }}
                 $0.options = [.mwl, .isna, .egypt, .makkah, .karachi, .tehran, .jafari]
@@ -58,7 +58,7 @@ class SettingsVC: FormViewController {
                     }
                 }
             }
-            <<< ActionSheetRow<AKPrayerTime.JuristicMethod>() {
+            <<< ActionSheetRow<AsrJuristicMethod>() {
                 $0.title = "Asr Method"
                 $0.displayValueFor = { c in c.map { String(describing: $0).capitalized }}
                 $0.options = [.shafii, .hanafi]
@@ -69,7 +69,7 @@ class SettingsVC: FormViewController {
                     }
                 }
             }
-            <<< ActionSheetRow<AKPrayerTime.MidnightMethod>() {
+            <<< ActionSheetRow<MidnightMethod>() {
                 $0.title = "Midnight Method"
                 $0.displayValueFor = { c in c.map { String(describing: $0).capitalized }}
                 $0.options = [.standard, .jafari]
@@ -80,7 +80,7 @@ class SettingsVC: FormViewController {
                     }
                 }
             }
-            <<< ActionSheetRow<AKPrayerTime.HigherLatutudeAdjustment>() {
+            <<< ActionSheetRow<HigherLatutudeAdjustment>() {
                 $0.title = "Higher Latutude Adjustment"
                 $0.displayValueFor = { c in c.map { String(describing: $0).capitalized }}
                 $0.options = [.angleBased, .oneSeventh, .midNight, .none]
@@ -134,12 +134,12 @@ extension TimeZone {
 }
 
 extension CLLocation {
-    var prayerLocation: AKPrayerTime.Coordinate {
-        return AKPrayerTime.Coordinate(lat: coordinate.latitude, lng: coordinate.longitude)
+    var prayerLocation: Coordinate {
+        return Coordinate(lat: coordinate.latitude, lng: coordinate.longitude)
     }
 }
 
-extension AKPrayerTime.Coordinate {
+extension Coordinate {
     var clLocation: CLLocation {
         return CLLocation(latitude: latitude, longitude: longitude)
     }
