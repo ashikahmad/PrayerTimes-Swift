@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension AKPrayerTime.Time {
+public extension Time {
 
     func toDate(base date: Date = Date(),
                 calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
@@ -31,18 +31,18 @@ public extension AKPrayerTime.Time {
     }
 }
 
-extension AKPrayerTime.Time: Comparable {
+extension Time: Comparable {
     
-    public static func < (lhs: AKPrayerTime.Time, rhs: AKPrayerTime.Time) -> Bool {
+    public static func < (lhs: Time, rhs: Time) -> Bool {
         return lhs.duration < rhs.duration
     }
 
-    public static func == (lhs: AKPrayerTime.Time, rhs: AKPrayerTime.Time) -> Bool {
+    public static func == (lhs: Time, rhs: Time) -> Bool {
         return lhs.duration == rhs.duration
     }
 }
 
-extension AKPrayerTime.Time {
+extension Time {
     func prevDayDuration() -> Double {
         return duration - 24
     }

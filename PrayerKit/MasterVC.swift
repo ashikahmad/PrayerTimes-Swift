@@ -11,7 +11,7 @@ import AKPrayerTime
 
 class MasterVC: UITableViewController {
 
-    var todayTimes:[(AKPrayerTime.TimeNames, AKPrayerTime.Time)] = []
+    var todayTimes:[(PrayerName, Time)] = []
 
     override func awakeFromNib() {
         super.awakeFromNib()

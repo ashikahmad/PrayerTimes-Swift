@@ -143,7 +143,7 @@ public class MapViewController : UIViewController, TypedRowControllerType, MKMap
         navigationItem.rightBarButtonItem = button
 
         if let value = row.value {
-            let region = MKCoordinateRegionMakeWithDistance(value.coordinate, 400, 400)
+            let region = MKCoordinateRegion.init(center: value.coordinate, latitudinalMeters: 400, longitudinalMeters: 400)
             mapView.setRegion(region, animated: true)
         }
         else{

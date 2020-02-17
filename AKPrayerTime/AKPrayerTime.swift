@@ -1,6 +1,7 @@
 //
 //  AKPrayerTime.swift
 //  PrayerKit
+//  By 𝔸𝕤𝕙𝕚𝕜 𝕌𝕕𝕕𝕚𝕟 𝔸𝕙𝕞𝕒𝕕
 //
 //  Created by Ashik Ahmad on 4/15/15.
 //  Copyright (c) 2015 WNeeds. All rights reserved.
@@ -10,121 +11,13 @@ import UIKit
 
 public final class AKPrayerTime {
 
-    /**
-     `Time` wraps double time into a formal namespace
-     along with basic functionalities
-     */
-    public struct Time {
-        public let duration: Double
-
-        public init(hours: Int, minutes: Int) {
-            let fixedHours = Time.fixedHours(Double(hours))
-            self.duration = fixedHours + Double(minutes) / 60.0
-        }
-
-        public init(duration: Double) {
-            var ttime = duration + 0.5 / 60.0 // add 0.5 minutes to round
-            ttime = Time.fixedHours(ttime)
-            self.duration = ttime
-        }
-
-        private static func fixedHours(_ hours: Double) -> Double {
-            return DMath.wrap(hours, min: 0, max: 24)
-        }
-
-        public var hours: Int {
-            return Int(floor(duration))
-        }
-
-        public var minutes: Int {
-            return Int(floor((duration - Double(hours)) * 60.0))
-        }
-    }
-    
-    public enum CalculationMethod {
-
-        /// Muslim World League
-        case mwl
-
-        /// Islamic Society of North America
-        case isna
-
-        /// Egyptian General Authority of Survey
-        case egypt
-
-        /// Umm al-Qura University, Makkah
-        case makkah
-
-        /// University of Islamic Science, Karachi
-        case karachi
-
-        /// Institute of Geophysics, University of Tehran
-        case tehran
-
-        /// Shia Ithna Ashari, Leva Research Institute, Qum
-        case jafari
-
-        /// Custom, these can be changed as user sets.
-        case custom
-    }
-    
-    public enum JuristicMethod: Int {
-
-        /// Shafi'i, Maliki, Ja'fari, and Hanbali
-        case shafii = 0
-
-        /// Hanafi
-        case hanafi = 1
-        
-        func toInt()->Int { return self.rawValue }
-    }
-
-    public enum MidnightMethod: Int {
-        case standard
-        case jafari
-    }
-    
-    public enum HigherLatutudeAdjustment {
-        case none
-        case midNight
-        case oneSeventh
-        case angleBased
-    }
-    
-    public enum TimeNames : String {
-        case imsak
-        case fajr
-        case sunrise
-        case dhuhr
-        case asr
-        case sunset
-        case maghrib
-        case isha
-        case midnight
-        case qiyam
-        
-        public func toString()->String {
-            return self.rawValue.capitalized
-        }
-    }
-    
-    public struct Coordinate {
-        public var latitude: Double
-        public var longitude: Double
-        public var elevation: Double
-        
-        public init(lat: Double, lng: Double, elv: Double = 0) {
-            latitude = lat
-            longitude = lng
-            elevation = elv
-        }
-    }
-
+    // MARK: -
     public enum AnglesOrMinutes {
         case angles(Double)
         case minutes(Double)
     }
-    
+
+    // MARK: -
     struct MethodParams {
         var fajrAngle: Double
         var maghrib: AnglesOrMinutes
@@ -136,7 +29,7 @@ public final class AKPrayerTime {
         static let calendar = Calendar(identifier: .gregorian)
         static let componentsDMY = Set([Calendar.Component.year, Calendar.Component.month, Calendar.Component.day])
 
-        static let dayTimes: [TimeNames: Double] = [
+        static let dayTimes: [PrayerName: Double] = [
             .imsak   : 5.0,
             .fajr    : 5.0,
             .sunrise : 6.0,
@@ -147,62 +40,6 @@ public final class AKPrayerTime {
             .isha    : 18.0
         ]
 
-        /**
-         Required parameters for calculation methods.
-         None but the `.Custom` parameters should be changed where appropriate.
-         Mostly, you should not be touching is directly. Use set** methods instead
-         as appropriate.
-         */
-        static var methodParams: [CalculationMethod: MethodParams] = [
-            .mwl: MethodParams(
-                fajrAngle: 18,
-                maghrib: .minutes(0),
-                isha: .angles(17),
-                midnight: .standard),
-
-            .isna: MethodParams(
-                fajrAngle: 15,
-                maghrib: .minutes(0),
-                isha: .angles(15),
-                midnight: .standard),
-
-            .egypt: MethodParams(
-                fajrAngle: 19.5,
-                maghrib: .minutes(0),
-                isha: .angles(17.5),
-                midnight: .standard),
-
-            // fajrAngle was 19 degrees before 1430 hijri
-            .makkah: MethodParams(
-                fajrAngle: 18.5,
-                maghrib: .minutes(0),
-                isha: .minutes(90),
-                midnight: .standard),
-
-            .karachi: MethodParams(
-                fajrAngle: 18,
-                maghrib: .minutes(0),
-                isha: .angles(18),
-                midnight: .standard),
-
-            .tehran: MethodParams(
-                fajrAngle: 17.7,
-                maghrib: .angles(4.5),
-                isha: .angles(14),
-                midnight: .jafari),
-
-            .jafari: MethodParams(
-                fajrAngle: 16,
-                maghrib: .angles(4),
-                isha: .angles(14),
-                midnight: .jafari),
-
-            .custom: MethodParams(
-                fajrAngle: 18,
-                maghrib: .minutes(0),
-                isha: .angles(17),
-                midnight: .standard)
-        ]
     }
 
     //------------------------------------------------------
@@ -213,10 +50,31 @@ public final class AKPrayerTime {
     var numIterations:Int = 2
 
     //------------------------------------------------------
-    // MARK: - Properties
+    // MARK: - Basic Configurations
     //------------------------------------------------------
-    
-    public var offsets:[TimeNames: Double] = [
+
+    /// Prayer calculation methods.
+    /// See `CalculationMethod` enums for more details
+    public var calculationMethod      = CalculationMethod.mwl {
+        didSet {
+            if calculationMethod != .custom {
+                params = calculationMethod.params
+            }
+        }
+    }
+    /// Asr method, `Shafii` or `Hanafii`
+    public var asrJuristic            = AsrJuristicMethod.shafii
+
+    //------------------------------------------------------
+    // MARK: - Optional Configurations
+    //------------------------------------------------------
+
+    //------------------------------------------------------
+    // MARK: - Advanced Configurations
+    //------------------------------------------------------
+
+
+    public var offsets:[PrayerName: Double] = [
         .imsak   : 0,
         .fajr    : 0,
         .sunrise : 0,
@@ -229,24 +87,18 @@ public final class AKPrayerTime {
         .qiyam   : 0
     ];
     
-    
     /// Once 'computePrayerTimes' is called,
     /// computed values are stored here for reuse
-    public var currentPrayerTimes:[TimeNames: Time]?
+    public var currentPrayerTimes:[PrayerName: Time]?
+
+    public var expectedPrayerTimes: [PrayerName] = PrayerName.all
     
-    /// Prayer calculation methods.
-    /// See `CalculationMethod` enums for more details
-    public var calculationMethod      = CalculationMethod.mwl
-    /// Asr method, `Shafii` or `Hanafii`
-    public var asrJuristic            = JuristicMethod.shafii
     /// Adjustment options for Higher Latitude
     public var highLatitudeAdjustment = HigherLatutudeAdjustment.midNight
-    /// Prayer time output format.
-//    public var outputFormat           = OutputTimeFormat.time24
 
     public var imsakSettings: AnglesOrMinutes = .minutes(10)
     
-    // Not sure if it should be replaced by offsets[.Dhuhr]
+    // Some definition of dhuhr requires adding aprox. 1 minute (65 seconds max as calculated)
     public var dhuhrMinutes: Float = 0
     
     /// Coordinate of the place, times will be calculated for.
@@ -266,6 +118,8 @@ public final class AKPrayerTime {
             calculateJulianDate()
         }
     }
+
+    var params: MethodParams = CalculationMethod.mwl.params
     
     private lazy var jDate:Double = AKPrayerTime.julianDate(from: Date())
     
@@ -305,7 +159,7 @@ public final class AKPrayerTime {
     //------------------------------------------------------
     
     /// Return prayer times for a given date, latitude, longitude and timeZone
-    public func getDatePrayerTimes(year: Int, month: Int, day: Int, latitude: Double, longitude: Double, tZone: Float)-> [TimeNames: Time] {
+    public func getDatePrayerTimes(year: Int, month: Int, day: Int, latitude: Double, longitude: Double, tZone: Float)-> [PrayerName: Time] {
         coordinate = Coordinate(lat: latitude, lng: longitude)
         
         var comp = DateComponents()
@@ -325,7 +179,7 @@ public final class AKPrayerTime {
     }
     
     /// Returns prayer times for a date(or today) when everything is set
-    public func getPrayerTimes()->[TimeNames: Time]? {
+    public func getPrayerTimes()->[PrayerName: Time]? {
         // If coordinate is not set, cannot obtain prayer times
         if coordinate == nil {
             return nil
@@ -340,10 +194,10 @@ public final class AKPrayerTime {
         return computeDayTimes()
     }
 
-    public func sorted(_ t: [TimeNames: Time]) -> [(TimeNames, Time)] {
-        let seq: [AKPrayerTime.TimeNames] = [.imsak, .fajr, .sunrise,
-                                             .dhuhr, .asr, .sunset,
-                                             .maghrib, .isha, .midnight, .qiyam]
+    public func sorted(_ t: [PrayerName: Time]) -> [(PrayerName, Time)] {
+        let seq: [PrayerName] = [.imsak, .fajr, .sunrise,
+                                .dhuhr, .asr, .sunset,
+                                .maghrib, .isha, .midnight, .qiyam]
         return t.sorted {a,b in
             (seq.firstIndex(of: a.key) ?? 0) < (seq.firstIndex(of: b.key) ?? 0)
         }
@@ -355,11 +209,12 @@ public final class AKPrayerTime {
     
     /// Set custom values for calculation parameters
     private func setCustomParams(_ changes: (inout MethodParams)->Void) {
-        guard let mp = Defaults.methodParams[calculationMethod]
-            else { return }
-        var params = mp
         changes(&params)
-        Defaults.methodParams[.custom] = params
+//        guard let mp = Defaults.methodParams[calculationMethod]
+//            else { return }
+//        var params = mp
+//        changes(&params)
+//        Defaults.methodParams[.custom] = params
         calculationMethod = .custom
     }
 
@@ -470,13 +325,13 @@ public final class AKPrayerTime {
     }
     
     // compute mid-day (Dhuhr, Zawal) time
-    private func computeMidDay(_ t:Double)->Double {
+    private func computeMidDay(_ t: Double)->Double {
         let T = equationOfTime(jDate + t)
         return fixHour(12 - T)
     }
     
-    // compute time for a given angle G
-    private func sunAngleTime(_ G:Double, t:Double, ccw: Bool)-> Double {
+    // compute time for a given angle G, and day portion t
+    private func sunAngleTime(_ G: Double, t: Double, ccw: Bool)-> Double {
         // Sun Declination
         let D:Double = sunDeclination(jDate + t)
         // Zawal
@@ -491,9 +346,9 @@ public final class AKPrayerTime {
     
     // compute the time of Asr
     // Shafii: step=1, Hanafi: step=2
-    private func computeAsr(step: Double, t: Double)-> Double {
+    private func computeAsr(step: Int, t: Double)-> Double {
         let d = sunDeclination(jDate + t)
-        let g = -DMath.dArcCot(step + DMath.dTan(abs(coordinate!.latitude - d)))
+        let g = -DMath.dArcCot(Double(step) + DMath.dTan(abs(coordinate!.latitude - d)))
         return sunAngleTime(g, t: t, ccw: false)
     }
     
@@ -511,11 +366,10 @@ public final class AKPrayerTime {
     //------------------------------------------------------
     
     // compute prayer times at given julian date
-    private func computeTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
+    private func computeTimes(_ times: [PrayerName: Double])-> [PrayerName: Double] {
         var t = dayPortion(times)
-        let params = Defaults.methodParams[calculationMethod]!
-        
-        var cTimes: [TimeNames: Double] = [:]
+
+        var cTimes: [PrayerName: Double] = [:]
 
         if case let .angles(angle) = imsakSettings {
             cTimes[.imsak] = sunAngleTime(angle, t: t[.imsak]!, ccw: true)
@@ -525,7 +379,7 @@ public final class AKPrayerTime {
         cTimes[.fajr]    = sunAngleTime(params.fajrAngle, t: t[.fajr]!, ccw: true)
         cTimes[.sunrise] = sunAngleTime(riseSet, t: t[.sunrise]!, ccw: true)
         cTimes[.dhuhr]   = computeMidDay(t[.dhuhr]!)
-        cTimes[.asr]     = computeAsr(step: Double(1 + asrJuristic.toInt()), t: t[.asr]!)
+        cTimes[.asr]     = computeAsr(step: asrJuristic.shadowCoefficient, t: t[.asr]!)
         cTimes[.sunset]  = sunAngleTime(riseSet, t: t[.sunset]!, ccw: false)
 
         if case let .angles(angle) = params.maghrib {
@@ -540,7 +394,7 @@ public final class AKPrayerTime {
     }
     
     // compute prayer times at given julian date
-    private func computeDayTimes()-> [TimeNames: Time] {
+    private func computeDayTimes()-> [PrayerName: Time] {
         //default times
         var times = Defaults.dayTimes;
         
@@ -556,8 +410,9 @@ public final class AKPrayerTime {
         
         times = adjustTimes(times)
 
+        // FIXME: To calculate nightTime, sunrise/fajr should be for next date.
         let nightTime: Double
-        switch Defaults.methodParams[calculationMethod]!.midnight {
+        switch params.midnight {
         case .standard:
             nightTime = timeDiff(times[.sunset]!, time2: times[.sunrise]!)
         case .jafari:
@@ -583,7 +438,7 @@ public final class AKPrayerTime {
 //        offsets = offsetTimes;
 //    }
 
-    private func tuneTimes(_ times:[TimeNames: Double])-> [TimeNames: Double] {
+    private func tuneTimes(_ times:[PrayerName: Double])-> [PrayerName: Double] {
         var ttimes = times
         for (pName, time) in times {
             //if(i==5)
@@ -604,7 +459,7 @@ public final class AKPrayerTime {
     }
     
     // adjust times in a prayer time array
-    private func adjustTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
+    private func adjustTimes(_ times: [PrayerName: Double])-> [PrayerName: Double] {
         var ttimes = times
 
         let offset = (Double(timeZone) - coordinate!.longitude / 15.0)
@@ -613,8 +468,6 @@ public final class AKPrayerTime {
         if (highLatitudeAdjustment != .none){
             ttimes = adjustHighLatTimes(ttimes)
         }
-        
-        let params = Defaults.methodParams[calculationMethod]!
         
         // Minutes based adjustments
         if case let .minutes(min) = imsakSettings {
@@ -628,17 +481,16 @@ public final class AKPrayerTime {
         }
         
         //Dhuhr
-        ttimes[TimeNames.dhuhr] = ttimes[TimeNames.dhuhr]! + (Double(dhuhrMinutes) / 60.0);
+        ttimes[PrayerName.dhuhr] = ttimes[PrayerName.dhuhr]! + (Double(dhuhrMinutes) / 60.0);
         
         return ttimes;
     }
 
     // adjust Fajr, Isha and Maghrib for locations in higher latitudes
-    private func adjustHighLatTimes(_ times: [TimeNames: Double])-> [TimeNames: Double] {
+    private func adjustHighLatTimes(_ times: [PrayerName: Double])-> [PrayerName: Double] {
 
-        guard let params = Defaults.methodParams[calculationMethod],
-            let sunrise = times[TimeNames.sunrise],
-            let sunset = times[TimeNames.sunset]
+        guard let sunrise = times[PrayerName.sunrise],
+            let sunset = times[PrayerName.sunset]
             else { return times }
 
         var ttimes = times
@@ -698,8 +550,8 @@ public final class AKPrayerTime {
     }
     
     // convert hours to day portions
-    private func dayPortion(_ times: [TimeNames: Double])-> [TimeNames: Double] {
-        var ttimes = [TimeNames: Double]()
+    private func dayPortion(_ times: [PrayerName: Double])-> [PrayerName: Double] {
+        var ttimes = [PrayerName: Double]()
         for (pName, time) in times {
             let timeH = time / 24.0
             ttimes[pName] = timeH
@@ -734,9 +586,19 @@ public final class AKPrayerTime {
 
  CALCULATED TIMES (Relative to base times)
  -----------------------------------------
- 1. Midnight (Based on Sunset-Fajr or Sunset-sunrise)
- 2. Qiyam Al-lyle (Based on Sunset-Fajr or Sunset-sunrise)
+ 1. Midnight (Based on Sunset-Fajr or Sunset-Sunrise)
+ 2. Qiyam Al-lyle (Based on Sunset-Fajr or Sunset-Sunrise)
 
+ TIMES: Description
+ -----------------------------------------
+ * Fajr: When the sky begin to lighten. Dawn.
+ * Sunrise: The time at which the first part of the sun appears above the horizon.
+ * Dhuhr: When the sun begin to decline after reaching it's highest point in the sky.
+ * Asr: The time when length of any objects shadow reaches a factor of the length of the object itself plus the length of that object's shadow at noon. The factor is either 1 or 2 accroding to different school of thoughts.
+ * Sunset: The time at which the last part of the sun disappears below the horizon.
+ * Maghrib: Soon after sunset.
+ * Isha: The time at which the darkness falls and there is no scattered light in the sky.
+ * Midnight: The mean time from sunset to sunrise (or from sunset to Fajr in some school of thoughts)
 
 
  Declination is calculated with the following formula:
@@ -753,4 +615,56 @@ public final class AKPrayerTime {
  -[ ] Get prayer times for array/range of dates (i.e. for week or month)
  -[ ] Get current prayer time: time name, start time, remaining time
 
+ ===========================================
+ CALCULATIONS
+ ===========================================
+
+ // Date passed after noon of 1st January, 2000 (when jd = 2451545.0)
+ jd2k = 2451545.0;
+ d = jd - jd2k;  // jd is the given Julian date
+
+ // Mean anomaly of the Sun, in degrees. Need to reduce to 0-360 range.
+ g = 357.529 + 0.98560028 * d;
+ // Mean longitude of the Sun, in degrees. Need to reduce to 0-360 range.
+ q = 280.459 + 0.98564736 * d;
+ // Geocentric apparent ecliptic longitude of the Sun (adjusted for aberration), in degrees. Need to reduce to 0-360 range.
+ L = q + 1.915* sin(g) + 0.020* sin(2*g);
+
+ // The distance of the Sun from the Earth aproximated, in astronomical units (AU)
+ R = 1.00014 - 0.01671 * cos(g) - 0.00014 * cos(2*g);
+ // Mean obliquity of the ecliptic, in degrees
+ e = 23.439 - 0.00000036* d;
+ // Sun's right ascension
+ RA = arctan2(cos(e)* sin(L), cos(L))/ 15;
+ // declination of the Sun
+ D = arcsin(sin(e)* sin(L));
+ // Equation of time
+ EqT = q/15 - RA;
+
+ // Dhuhr
+ -------------------
+ Dhuhr = 12 + TimeZone - Lng/15 - EqT
+
+ // Sun at Angle
+ -------------------
+ The time difference between the mid-day and the time at which sun reaches an angle α below the horizon can be computed using the following formula:
+
+ T(α) = 1/15 * arccos( (-sin(α) - sin(L)*sin(D)) / (cos(L)*cos(D)) )
+
+ // Sunrise/Sunset
+ -------------------
+ Astronomical sunrise and sunset occur at α=0. However, due to the refraction of light by terrestrial atmosphere, actual sunrise appears slightly before astronomical sunrise and actual sunset occurs after astronomical sunset. Actual sunrise and sunset can be computed using the following formulas:
+
+ Sunrise = Dhuhr - T(0.833)
+ Sunset = Dhuhr + T(0.833)
+
+ // Asr
+ -------------------
+ The following formula computes the time difference between the mid-day and the time at which the object's shadow equals t times the length of the object itself plus the length of that object's shadow at noon:
+
+ A(t) = 1/15 * arccos( (sin( arccot(t + tan(L-D)))) - sin(L)*sin(D)) / (cos(L)*cos(D)) )
+
+ So, Asr is,
+ Asr = Dhuhr + A(1); // For Shafi'i, Maliki, Ja'fari, and Hanbali school of thoughts
+ Asr = Dhuhr + A(2); // For Hanafi school of thoughts
  */

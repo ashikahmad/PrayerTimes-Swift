@@ -13,6 +13,7 @@ import Foundation
 // ------------------------------------------------------
 
 class DMath {
+
     class func wrap(_ a: Double, min: Double, max: Double)-> Double {
         var aa = a
         let range = max - min
@@ -24,7 +25,7 @@ class DMath {
 
     // range reduce angle in degrees.
     class func fixAngle(_ a: Double)-> Double {
-        return wrap(a, min: 0, max: 360)
+        return a.reduce(max: 360) //wrap(a, min: 0, max: 360)
     }
 
     // radian to degree
